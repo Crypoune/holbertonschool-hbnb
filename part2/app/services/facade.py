@@ -33,7 +33,7 @@ class HBnBFacade:
     def update_user(self, user_id: str, data: dict):
         self.user_repo.update(user_id, data)
 
-    # méthode amentity
+     # ── Amenity ────────────────────────────────────────────────────────────────
 
     def create_amenity(self, amenity_data):
         amenity = Amenity(name=amenity_data['name'])
@@ -50,7 +50,7 @@ class HBnBFacade:
         self.amenity_repo.update(amenity_id, amenity_data)
         return self.get_amenity(amenity_id)
 
-    # méthode place
+    # ── Place ────────────────────────────────────────────────────────────────
 
     def create_place(self, place_data):
         owner_id = place_data.get('owner_id')
