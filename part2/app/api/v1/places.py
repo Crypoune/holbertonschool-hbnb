@@ -1,4 +1,3 @@
-# app/api/v1/places.py
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 
@@ -27,7 +26,7 @@ class PlaceList(Resource):
             for p in places
         ], 200
 
-    @api.expect(place_model, validate=True)  # ✅ AJOUT validate=True — manquait
+    @api.expect(place_model, validate=True)
     @api.response(201, 'Place created')
     @api.response(400, 'Validation error')
     def post(self):
@@ -66,11 +65,12 @@ class PlaceResource(Resource):
                 'id':         owner.id,
                 'first_name': owner.first_name,
                 'last_name':  owner.last_name,
+                'email':      owner.email,
             } if owner else None,
             'amenities': place.amenities,
         }, 200
 
-    @api.expect(place_model, validate=True)  # ✅ AJOUT validate=True — manquait
+    @api.expect(place_model, validate=True)
     @api.response(200, 'Place updated')
     @api.response(400, 'Validation error')
     @api.response(404, 'Place not found')
@@ -83,3 +83,14 @@ class PlaceResource(Resource):
             return {'error': str(e)}, 400
         except Exception:
             return {'error': 'Lieu non trouvé'}, 404
+
+@api.route('/<string:place_id>/reviews')
+class PlaceReviewList(Resource):
+
+    @api.response(200, 'Reviews for place')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all reviews for a place"""
+        if not facade.get_place(place_id):
+            api.abort(404, 'Place not found')
+        return [r.to_dict() for r in facade.get_reviews_by_place(place_id)], 200

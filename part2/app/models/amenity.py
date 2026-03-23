@@ -14,27 +14,14 @@ class Amenity(BaseModel):
                 description (str): Optional description of the amenity
         """
         super().__init__() # Call __init__ of BaseModel
+        if not name or not name.strip():
+            raise ValueError("Name is required and cannot be empty")
         self.name = name
         self.description = description
 
     def to_dict(self):
-        """
-            Convert Amenity to dictionary
-        """
-        return {
-            'id': self.id,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat(),
-            'name': self.name,
-            'description': self.description
-        }
-
-    @staticmethod
-    def list_all():
-        """
-            List all amenities
-            Returns:
-                list: List of all available Amenity objects
-        """
-        # Only a placeholder. In Part3, we will implement actual data retrieval.
-        pass
+        """Convert Amenity to dictionary"""
+        amenity_dict = super().to_dict()
+        amenity_dict['name'] = self.name
+        amenity_dict['description'] = self.description
+        return amenity_dict

@@ -19,43 +19,18 @@ class Review(BaseModel):
         self.rating = rating
         self.user_id = user_id
         self.place_id = place_id
-        # Validate rating on creation
         self.validate_rating()
 
     def validate_rating(self):
-        """
-            Validate rating value to ensure it's between 1 and 5
-
-            Raises:
-                ValueError: If rating is not between 1 and 5
-        """
+        """Validate rating value to ensure it's between 1 and 5."""
         if not isinstance(self.rating, int) or not (1 <= self.rating <= 5):
             raise ValueError("Rating must be an integer between 1 and 5")
 
     def to_dict(self):
-        """
-            Convert Review to dictionary
-        """
-        return {
-            'id': self.id,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat(),
-            'text': self.text,
-            'rating': self.rating,
-            'user_id': self.user_id,
-            'place_id': self.place_id
-        }
-
-    @staticmethod
-    def list_by_place(place_id):
-        """
-            List all reviews for a specific place
-
-            Args:
-                place_id (str): UUID of the place to list reviews for
-
-            Returns:
-                list: List of Review objects for the specified place
-        """
-        # Only a placeholder. In Part3, we will implement actual data retrieval.
-        pass
+        """Convert Review to dictionary."""
+        review_dict = super().to_dict()
+        review_dict['text'] = self.text
+        review_dict['rating'] = self.rating
+        review_dict['user_id'] = self.user_id
+        review_dict['place_id'] = self.place_id
+        return review_dict

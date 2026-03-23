@@ -9,9 +9,6 @@ class User(BaseModel):
     """
 
     def __init__(self, first_name, last_name, email, password, is_admin=False):
-        """
-        Initialize User instance with provided attributes.
-        """
         super().__init__()
         self.first_name = first_name
         self.last_name = last_name
@@ -29,11 +26,9 @@ class User(BaseModel):
     def first_name(self, value):
         if not value or not isinstance(value, str):
             raise ValueError("First name is required and must be a string")
-
         value = value.strip()
         if not value:
             raise ValueError("First name cannot be empty")
-
         self._first_name = value
 
     # ===================== LAST NAME =====================
@@ -46,11 +41,9 @@ class User(BaseModel):
     def last_name(self, value):
         if not value or not isinstance(value, str):
             raise ValueError("Last name is required and must be a string")
-
         value = value.strip()
         if not value:
             raise ValueError("Last name cannot be empty")
-
         self._last_name = value
 
     # ===================== EMAIL =====================
@@ -65,81 +58,33 @@ class User(BaseModel):
 
     @staticmethod
     def _validate_email(email):
-        """
-        Validate email format.
-        """
         if not email or not isinstance(email, str):
             raise ValueError("Email is required and must be a string")
-
         email = email.strip().lower()
-
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.fullmatch(email_regex, email):
             raise ValueError("Invalid email format")
-
         return email
 
     # ===================== PASSWORD =====================
 
     @property
     def password(self):
-        """Getter for password (returns None for security reasons)"""
-        return None
+        return None  # non lisible pour sécurité
 
     @password.setter
     def password(self, value):
         if not value or not isinstance(value, str):
             raise ValueError("Password is required and must be a string")
-
-        self._password = value  # hashing in Part3
-
-    def validate_password(self):
-        """
-        Validate password strength.
-        """
-        return len(self._password) >= 8
+        self._password = value  # hashing en partie 3
 
     # ===================== SERIALIZATION =====================
 
     def to_dict(self):
-        """
-        Convert User to dictionary.
-        Excludes password for security reasons.
-        """
+        """Convert User to dictionary — password exclu."""
         user_dict = super().to_dict()
         user_dict["first_name"] = self.first_name
         user_dict["last_name"] = self.last_name
         user_dict["email"] = self.email
         user_dict["is_admin"] = self.is_admin
-
-        # sécurité
-        user_dict.pop("_password", None)
         return user_dict
-
-    # ===================== PLACEHOLDERS =====================
-
-    def register(self):
-        """Register the user in the database (to be implemented in Part3)"""
-        pass
-
-    def authenticate(self, password):
-        """
-        Authenticate user with password.
-        """
-        return self._password == password
-
-    def add_place(self, title, description, price, latitude, longitude):
-        """Add a place for the user (to be implemented in Part3)"""
-        pass
-
-    def has_reserved(self, place):
-        """Check if user has reserved a place (to be implemented in Part3)"""
-        pass
-
-    def add_review(self, text, rating):
-        """Add a review for a place (to be implemented in Part3)"""
-        pass
-
-    def add_amenity(self, name, description):
-        """Add an amenity for the user (to be implemented in Part3)"""
-        pass

@@ -53,58 +53,21 @@ class Place(BaseModel):
 
     # ----------------- Amenities -----------------
     def add_amenity(self, amenity):
-        """
-        Add an amenity to the place.
-        Accepts either an Amenity object or its id (string).
-        """
-        if hasattr(amenity, "id"):
-            amenity_id = amenity.id
-        else:
-            amenity_id = amenity  # assume it's a UUID string
-
+        """Add an amenity to the place (objet ou UUID string)."""
+        amenity_id = amenity.id if hasattr(amenity, "id") else amenity
         if amenity_id not in self.amenities:
             self.amenities.append(amenity_id)
 
     # ----------------- Serialization -----------------
     def to_dict(self):
-        """
-        Convert Place to dictionary.
-        Includes private coordinates and amenity IDs.
-        """
-        return {
-            'id': self.id,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat(),
-            'name': self.name,
-            'title': self.title,
-            'description': self.description,
-            'price': self.price,
-            'latitude': self._latitude,
-            'longitude': self._longitude,
-            'owner_id': self.owner_id,
-            'amenities': self.amenities
-        }
-
-    # ----------------- Static / Class Methods -----------------
-    @staticmethod
-    def list_all():
-        """List all places (to be implemented in Part3)"""
-        pass
-
-    @staticmethod
-    def get_by_criteria(criteria):
-        """
-        Get places by search criteria (to be implemented in Part3)
-        Args:
-            criteria (dict): filters like price_max, city, etc.
-        Returns:
-            list of Place objects
-        """
-        pass
-
-    def get_all_reservations(self):
-        """
-        Get all reservations for this place (to be implemented in Part3)
-        Private method for owner use only
-        """
-        pass
+        """Convert Place to dictionary."""
+        place_dict = super().to_dict()
+        place_dict['name'] = self.name
+        place_dict['title'] = self.title
+        place_dict['description'] = self.description
+        place_dict['price'] = self.price
+        place_dict['latitude'] = self.latitude
+        place_dict['longitude'] = self.longitude
+        place_dict['owner_id'] = self.owner_id
+        place_dict['amenities'] = self.amenities
+        return place_dict

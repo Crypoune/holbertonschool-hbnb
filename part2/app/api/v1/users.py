@@ -1,4 +1,3 @@
-# app/api/v1/users.py
 from flask_restx import Namespace, Resource, fields, abort
 from app.services import facade
 
@@ -17,9 +16,13 @@ class UserList(Resource):
 
     @api.expect(user_model, validate=True)
     @api.response(201, 'User created')
+    @api.response(400, 'Email already registered')
     @api.response(400, 'Validation error')
     def post(self):
         """Create a new user"""
+        # Vérification unicité email
+        if facade.get_user_by_email(api.payload['email']):
+            return {'error': 'Email already registered'}, 400
         try:
             user = facade.create_user(api.payload)
             return user.to_dict(), 201
