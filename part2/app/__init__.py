@@ -2,8 +2,12 @@ from flask import Flask
 from flask_restx import Api
 
 
-def create_app():
+def create_app(config_name='default'):
     app = Flask(__name__)
+
+    # ── Charger la configuration ──
+    from config import config
+    app.config.from_object(config.get(config_name, config['default']))
 
     api = Api(
         app,
