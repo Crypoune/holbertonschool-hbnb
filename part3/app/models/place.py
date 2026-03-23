@@ -4,25 +4,35 @@ from app import db
 class Place(BaseModel):
     __tablename__ = 'places'
 
-    name = db.Column(db.String(100), nullable=False)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(500), default='')
-    price = db.Column(db.Float, nullable=False)
+    _price = db.Column('price', db.Float, nullable=False)
     _latitude = db.Column('latitude', db.Float, nullable=False)
     _longitude = db.Column('longitude', db.Float, nullable=False)
     owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
     amenities = db.Column(db.JSON, default=list)
 
-    def __init__(self, name, title, description, price, latitude, longitude, owner_id):
+    def __init__(self, title, description, price, latitude, longitude, owner_id):
         super().__init__()
-        self.name = name
         self.title = title
         self.description = description
         self.price = price
-        self.latitude = latitude    # passe par le setter avec validation
-        self.longitude = longitude  # passe par le setter avec validation
+        self.latitude = latitude
+        self.longitude = longitude
         self.owner_id = owner_id
         self.amenities = []
+        
+ # ----------------- Price -----------------
+
+    @property
+    def price(self):
+        return self._price
+
+    @price.setter
+    def price(self, value):
+        if not isinstance(value, (int, float)) or value <= 0:
+            raise ValueError("Price must be a positive number")
+        self._price = value
 
     # ----------------- Latitude -----------------
 
@@ -59,7 +69,6 @@ class Place(BaseModel):
 
     def to_dict(self):
         place_dict = super().to_dict()
-        place_dict['name'] = self.name
         place_dict['title'] = self.title
         place_dict['description'] = self.description
         place_dict['price'] = self.price

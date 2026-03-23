@@ -1,30 +1,32 @@
-from app.persistence.repository import SQLAlchemyRepository
 from app.models.user import User
 from app.models.place import Place
 from app.models.amenity import Amenity
 from app.models.review import Review
+from app.services.repositories.amenity_repository import AmenityRepository
+from app.services.repositories.place_repository import PlaceRepository
+from app.services.repositories.review_repository import ReviewRepository
+from app.services.repositories.user_repository import UserRepository
 
 
 class HBnBFacade:
     def __init__(self):
-        self.user_repo     = SQLAlchemyRepository(User)
-        self.place_repo    = SQLAlchemyRepository(Place)
-        self.amenity_repo  = SQLAlchemyRepository(Amenity)
-        self.review_repo   = SQLAlchemyRepository(Review)
+        self.user_repo     = UserRepository()
+        self.place_repo    = PlaceRepository()
+        self.amenity_repo  = AmenityRepository()
+        self.review_repo   = ReviewRepository()
 
     # ── User ──────────────────────────────────────────────────────────────────
 
-    def create_user(self, user_data: dict):
-        user_data = dict(user_data)  # copie pour ne pas muter api.payload
+    def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
         return user
 
-    def get_user(self, user_id: str):
+    def get_user(self, user_id):
         return self.user_repo.get(user_id)
 
-    def get_user_by_email(self, email: str):
-        return self.user_repo.get_by_attribute('_email', email)
+    def get_user_by_email(self, email):
+        return self.user_repo.get_user_by_email(email)
 
     def get_all_users(self):
         return self.user_repo.get_all()
@@ -59,13 +61,10 @@ class HBnBFacade:
 
     def create_place(self, place_data):
         owner_id = place_data.get('owner_id')
-        owner = self.user_repo.get(owner_id)
-
-        if not owner:
-            raise ValueError("Le propriétaire spécifié n'existe pas.")
+        if not self.user_repo.get(owner_id):
+            raise ValueError("Owner not found")
 
         place = Place(
-            name=place_data.get('name', place_data['title']),
             title=place_data['title'],
             description=place_data.get('description', ''),
             price=place_data['price'],
@@ -101,7 +100,7 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id: str):
-        return [r for r in self.review_repo.get_all() if r.place_id == place_id]
+        return self.review_repo.get_reviews_by_place(self, place_id)
 
     def update_review(self, review_id: str, data: dict):
         self.review_repo.update(review_id, data)
