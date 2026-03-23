@@ -16,14 +16,15 @@ from app import create_app
 # Fixtures
 # ─────────────────────────────────────────────────────────────────────────────
 
-@pytest.fixture
-def client():
-    """Fresh test client for every test."""
-    # Reset le facade directement
+@pytest.fixture(autouse=True)
+def reset_facade():
     import app.services as services_module
     from app.services.facade import HBnBFacade
     services_module.facade = HBnBFacade()
+    yield
 
+@pytest.fixture
+def client(reset_facade):
     app = create_app()
     app.testing = True
     with app.test_client() as client:
@@ -35,12 +36,11 @@ def client():
 # ─────────────────────────────────────────────────────────────────────────────
 
 def create_user(client, first_name="Arnaud", last_name="Messenet",
-                email="arnaud.messenet@example.com", password="securepass"):
+                email="arnaud.messenet@example.com"):
     return client.post('/api/v1/users/', json={
         "first_name": first_name,
         "last_name":  last_name,
         "email":      email,
-        "password":   password,
     })
 
 def create_amenity(client, name="WiFi"):
@@ -72,8 +72,6 @@ def create_review(client, place_id, user_id, text="Great!", rating=5):
 
 class TestUsers:
 
-    # ── POST /api/v1/users/ ───────────────────────────────────────────────────
-
     def test_create_user_success(self, client):
         resp = create_user(client)
         assert resp.status_code == 201
@@ -99,8 +97,6 @@ class TestUsers:
         resp = create_user(client, email="valentin.dardenne@example.com")
         assert resp.status_code in [400, 409]
 
-    # ── GET /api/v1/users/ ────────────────────────────────────────────────────
-
     def test_list_users(self, client):
         create_user(client, email="thomas.haenel@example.com")
         resp = client.get('/api/v1/users/')
@@ -112,8 +108,6 @@ class TestUsers:
         assert resp.status_code == 200
         assert isinstance(resp.get_json(), list)
 
-    # ── GET /api/v1/users/<id> ────────────────────────────────────────────────
-
     def test_get_user_by_id(self, client):
         user_id = create_user(client, email="valentin.dardenne@example.com").get_json()['id']
         resp = client.get(f'/api/v1/users/{user_id}')
@@ -124,15 +118,12 @@ class TestUsers:
         resp = client.get('/api/v1/users/nonexistent-id')
         assert resp.status_code == 404
 
-    # ── PUT /api/v1/users/<id> ────────────────────────────────────────────────
-
     def test_update_user(self, client):
         user_id = create_user(client, email="arnaud.messenet@example.com").get_json()['id']
         resp = client.put(f'/api/v1/users/{user_id}', json={
             "first_name": "Thomas",
             "last_name":  "Haenel",
             "email":      "thomas.haenel@example.com",
-            "password":   "newpassword",
         })
         assert resp.status_code == 200
         assert resp.get_json()['first_name'] == 'Thomas'
@@ -140,7 +131,7 @@ class TestUsers:
     def test_update_user_not_found(self, client):
         resp = client.put('/api/v1/users/nonexistent-id', json={
             "first_name": "X", "last_name": "Y",
-            "email": "x@y.com", "password": "pass1234",
+            "email": "x@y.com",
         })
         assert resp.status_code == 404
 
@@ -150,8 +141,6 @@ class TestUsers:
 # ═════════════════════════════════════════════════════════════════════════════
 
 class TestAmenities:
-
-    # ── POST /api/v1/amenities/ ───────────────────────────────────────────────
 
     def test_create_amenity_success(self, client):
         resp = create_amenity(client, "Pool")
@@ -168,8 +157,6 @@ class TestAmenities:
         resp = client.post('/api/v1/amenities/', json={"name": ""})
         assert resp.status_code in [400, 422]
 
-    # ── GET /api/v1/amenities/ ────────────────────────────────────────────────
-
     def test_list_amenities(self, client):
         create_amenity(client, "WiFi")
         resp = client.get('/api/v1/amenities/')
@@ -181,8 +168,6 @@ class TestAmenities:
         assert resp.status_code == 200
         assert resp.get_json() == []
 
-    # ── GET /api/v1/amenities/<id> ────────────────────────────────────────────
-
     def test_get_amenity_by_id(self, client):
         amenity_id = create_amenity(client, "Parking").get_json()['id']
         resp = client.get(f'/api/v1/amenities/{amenity_id}')
@@ -192,8 +177,6 @@ class TestAmenities:
     def test_get_amenity_not_found(self, client):
         resp = client.get('/api/v1/amenities/nonexistent-id')
         assert resp.status_code == 404
-
-    # ── PUT /api/v1/amenities/<id> ────────────────────────────────────────────
 
     def test_update_amenity(self, client):
         amenity_id = create_amenity(client, "Jacuzzi").get_json()['id']
@@ -216,8 +199,6 @@ class TestPlaces:
     def setup(self, client):
         self.client = client
         self.owner_id = create_user(client, email="arnaud.messenet@example.com").get_json()['id']
-
-    # ── POST /api/v1/places/ ─────────────────────────────────────────────────
 
     def test_create_place_success(self, client):
         resp = create_place(client, self.owner_id)
@@ -253,15 +234,11 @@ class TestPlaces:
         })
         assert resp.status_code in [400, 422]
 
-    # ── GET /api/v1/places/ ───────────────────────────────────────────────────
-
     def test_list_places(self, client):
         create_place(client, self.owner_id)
         resp = client.get('/api/v1/places/')
         assert resp.status_code == 200
         assert isinstance(resp.get_json(), list)
-
-    # ── GET /api/v1/places/<id> ───────────────────────────────────────────────
 
     def test_get_place_by_id(self, client):
         place_id = create_place(client, self.owner_id).get_json()['id']
@@ -272,8 +249,6 @@ class TestPlaces:
     def test_get_place_not_found(self, client):
         resp = client.get('/api/v1/places/nonexistent-id')
         assert resp.status_code == 404
-
-    # ── PUT /api/v1/places/<id> ───────────────────────────────────────────────
 
     def test_update_place(self, client):
         place_id = create_place(client, self.owner_id).get_json()['id']
@@ -296,8 +271,6 @@ class TestPlaces:
         })
         assert resp.status_code == 404
 
-    # ── Boundary tests ────────────────────────────────────────────────────────
-
     def test_create_place_boundary_latitude_min(self, client):
         resp = create_place(client, self.owner_id, latitude=-90.0)
         assert resp.status_code == 201
@@ -313,8 +286,6 @@ class TestPlaces:
     def test_create_place_boundary_longitude_max(self, client):
         resp = create_place(client, self.owner_id, longitude=180.0)
         assert resp.status_code == 201
-
-    # ── GET /api/v1/places/<id>/reviews ──────────────────────────────────────
 
     def test_get_reviews_by_place_empty(self, client):
         place_id = create_place(client, self.owner_id).get_json()['id']
@@ -339,8 +310,6 @@ class TestReviews:
         self.user_id  = create_user(client, email="valentin.dardenne@example.com").get_json()['id']
         self.owner_id = create_user(client, email="thomas.haenel@example.com").get_json()['id']
         self.place_id = create_place(client, self.owner_id).get_json()['id']
-
-    # ── POST /api/v1/reviews/ ─────────────────────────────────────────────────
 
     def test_create_review_success(self, client):
         resp = create_review(client, self.place_id, self.user_id)
@@ -385,15 +354,11 @@ class TestReviews:
         })
         assert resp.status_code in [400, 422]
 
-    # ── GET /api/v1/reviews/ ──────────────────────────────────────────────────
-
     def test_list_reviews(self, client):
         create_review(client, self.place_id, self.user_id)
         resp = client.get('/api/v1/reviews/')
         assert resp.status_code == 200
         assert isinstance(resp.get_json(), list)
-
-    # ── GET /api/v1/reviews/<id> ──────────────────────────────────────────────
 
     def test_get_review_by_id(self, client):
         review_id = create_review(client, self.place_id, self.user_id).get_json()['id']
@@ -404,8 +369,6 @@ class TestReviews:
     def test_get_review_not_found(self, client):
         resp = client.get('/api/v1/reviews/nonexistent-id')
         assert resp.status_code == 404
-
-    # ── PUT /api/v1/reviews/<id> ──────────────────────────────────────────────
 
     def test_update_review(self, client):
         review_id = create_review(client, self.place_id, self.user_id).get_json()['id']
@@ -423,8 +386,6 @@ class TestReviews:
         })
         assert resp.status_code == 404
 
-    # ── DELETE /api/v1/reviews/<id> ───────────────────────────────────────────
-
     def test_delete_review(self, client):
         review_id = create_review(client, self.place_id, self.user_id).get_json()['id']
         resp = client.delete(f'/api/v1/reviews/{review_id}')
@@ -434,8 +395,6 @@ class TestReviews:
     def test_delete_review_not_found(self, client):
         resp = client.delete('/api/v1/reviews/nonexistent-id')
         assert resp.status_code == 404
-
-    # ── GET /api/v1/places/<place_id>/reviews ────────────────────────────────
 
     def test_get_reviews_by_place(self, client):
         create_review(client, self.place_id, self.user_id, text="Nice", rating=4)

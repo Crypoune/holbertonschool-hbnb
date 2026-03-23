@@ -1,29 +1,24 @@
 from abc import ABC, abstractmethod
 
+
 class Repository(ABC):
     @abstractmethod
-    def add(self, obj):
-        pass
+    def add(self, obj): pass
 
     @abstractmethod
-    def get(self, obj_id):
-        pass
+    def get(self, obj_id): pass
 
     @abstractmethod
-    def get_all(self):
-        pass
+    def get_all(self): pass
 
     @abstractmethod
-    def update(self, obj_id, data):
-        pass
+    def update(self, obj_id, data): pass
 
     @abstractmethod
-    def delete(self, obj_id):
-        pass
+    def delete(self, obj_id): pass
 
     @abstractmethod
-    def get_by_attribute(self, attr_name, attr_value):
-        pass
+    def get_by_attribute(self, attr_name, attr_value): pass
 
 
 class InMemoryRepository(Repository):
@@ -49,4 +44,8 @@ class InMemoryRepository(Repository):
             del self._storage[obj_id]
 
     def get_by_attribute(self, attr_name, attr_value):
-        return next((obj for obj in self._storage.values() if getattr(obj, attr_name) == attr_value), None)
+        return next(
+            (obj for obj in self._storage.values()
+             if getattr(obj, attr_name, None) == attr_value),
+            None
+        )
