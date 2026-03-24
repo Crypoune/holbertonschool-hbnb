@@ -1,39 +1,33 @@
 """
-test_hbnb_api.py
-================
-Tests complets pour tous les endpoints de l'API HBnB - Partie 2.
-Couvre : Users, Amenities, Places, Reviews
-
-Lancement :
-    python -m pytest tests/test_hbnb_api.py -v
+test_hbnb_api.py - Tests Part 2
 """
-
 import pytest
 from app import create_app
 
+# Créer l'app UNE SEULE FOIS au chargement du module
+_app = create_app()
+_app.testing = True
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Fixtures
-# ─────────────────────────────────────────────────────────────────────────────
-
-@pytest.fixture(autouse=True)
-def reset_facade():
-    import app.services as services_module
-    from app.services.facade import HBnBFacade
-    services_module.facade = HBnBFacade()
-    yield
 
 @pytest.fixture
-def client(reset_facade):
-    app = create_app()
-    app.testing = True
-    with app.test_client() as client:
-        yield client
+def client():
+    # Récupérer la VRAIE facade utilisée par les endpoints
+    from app.api.v1 import users
+    real_facade = users.facade
+
+    # Vider les données avant chaque test
+    real_facade.user_repo._storage.clear()
+    real_facade.amenity_repo._storage.clear()
+    real_facade.place_repo._storage.clear()
+    real_facade.review_repo._storage.clear()
+
+    with _app.test_client() as c:
+        yield c
 
 
-# ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
 # Helpers
-# ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────
 
 def create_user(client, first_name="Arnaud", last_name="Messenet",
                 email="arnaud.messenet@example.com"):
@@ -66,9 +60,9 @@ def create_review(client, place_id, user_id, text="Great!", rating=5):
     })
 
 
-# ═════════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 # 1. USERS
-# ═════════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 
 class TestUsers:
 
@@ -106,7 +100,7 @@ class TestUsers:
     def test_list_users_empty(self, client):
         resp = client.get('/api/v1/users/')
         assert resp.status_code == 200
-        assert isinstance(resp.get_json(), list)
+        assert resp.get_json() == []
 
     def test_get_user_by_id(self, client):
         user_id = create_user(client, email="valentin.dardenne@example.com").get_json()['id']
@@ -136,9 +130,9 @@ class TestUsers:
         assert resp.status_code == 404
 
 
-# ═════════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 # 2. AMENITIES
-# ═════════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 
 class TestAmenities:
 
@@ -189,9 +183,9 @@ class TestAmenities:
         assert resp.status_code == 404
 
 
-# ═════════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 # 3. PLACES
-# ═════════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 
 class TestPlaces:
 
@@ -298,9 +292,9 @@ class TestPlaces:
         assert resp.status_code == 404
 
 
-# ═════════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 # 4. REVIEWS
-# ═════════════════════════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════════
 
 class TestReviews:
 
