@@ -100,7 +100,8 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id: str):
-        return self.review_repo.get_reviews_by_place(self, place_id)
+        # 👇 Retire le "self," en premier argument !
+        return self.review_repo.get_reviews_by_place(place_id)
 
     def update_review(self, review_id: str, data: dict):
         self.review_repo.update(review_id, data)
