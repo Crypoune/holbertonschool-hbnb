@@ -2,7 +2,7 @@
 
 ## Database Schema
 
-​```mermaid
+```mermaid
 erDiagram
     USER ||--o{ PLACE : "owns"
     USER ||--o{ REVIEW : "writes"
@@ -46,4 +46,4 @@ erDiagram
         CHAR_36 place_id FK
         CHAR_36 amenity_id FK
     }
-​```
+```
