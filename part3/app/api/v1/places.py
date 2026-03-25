@@ -11,7 +11,8 @@ place_model = api.model('Place', {
     'price':       fields.Float(required=True, description="Le prix par nuit"),
     'latitude':    fields.Float(required=True, description="La latitude"),
     'longitude':   fields.Float(required=True, description="La longitude"),
-    'owner_id':    fields.String(required=True, description="L'ID du propriétaire"),
+    # 👇 PASSER REQUIRED À FALSE
+    'owner_id':    fields.String(required=False, description="L'ID du propriétaire (Auto JWT)"), 
 })
 
 
