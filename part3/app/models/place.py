@@ -1,6 +1,12 @@
 from app.models.base_model import BaseModel
 from app import db
 
+place_amenity = db.Table(
+    'place_amenity',
+    db.Column('place_id', db.String(36), db.ForeignKey('places.id'), primary_key=True),
+    db.Column('amenity_id', db.String(36), db.ForeignKey('amenities.id'), primary_key=True)
+)
+
 class Place(BaseModel):
     __tablename__ = 'places'
 
@@ -10,7 +16,16 @@ class Place(BaseModel):
     _latitude = db.Column('latitude', db.Float, nullable=False)
     _longitude = db.Column('longitude', db.Float, nullable=False)
     owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
-    amenities = db.Column(db.JSON, default=list)
+
+    # Relationships
+    owner = db.relationship('User', backref='places', lazy=True)
+    reviews = db.relationship('Review', backref='place', cascade='all, delete-orphan')
+    amenities = db.relationship(
+    'Amenity',
+    secondary=place_amenity,
+    backref=db.backref('places', lazy=True),
+    lazy='subquery'
+)
 
     def __init__(self, title, description, price, latitude, longitude, owner_id):
         super().__init__()
@@ -21,7 +36,7 @@ class Place(BaseModel):
         self.longitude = longitude
         self.owner_id = owner_id
         self.amenities = []
-        
+
  # ----------------- Price -----------------
 
     @property
@@ -58,13 +73,6 @@ class Place(BaseModel):
             raise ValueError("Longitude must be a number between -180 and 180")
         self._longitude = value
 
-    # ----------------- Amenities -----------------
-
-    def add_amenity(self, amenity):
-        amenity_id = amenity.id if hasattr(amenity, "id") else amenity
-        if amenity_id not in self.amenities:
-            self.amenities.append(amenity_id)
-
     # ----------------- Serialization -----------------
 
     def to_dict(self):
@@ -75,5 +83,5 @@ class Place(BaseModel):
         place_dict['latitude'] = self.latitude
         place_dict['longitude'] = self.longitude
         place_dict['owner_id'] = self.owner_id
-        place_dict['amenities'] = self.amenities
+        place_dict['amenities'] = [a.to_dict() for a in self.amenities]
         return place_dict

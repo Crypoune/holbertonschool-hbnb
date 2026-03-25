@@ -10,6 +10,10 @@ class Review(BaseModel):
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
     place_id = db.Column(db.String(36), db.ForeignKey('places.id'), nullable=False)
 
+    # Relationships
+    place = db.relationship('Place', backref='reviews', lazy=True)
+    user = db.relationship('User', backref='reviews', lazy=True)
+
     def __init__(self, text, rating, user_id, place_id):
         super().__init__()
         if not text or not text.strip():
@@ -28,7 +32,7 @@ class Review(BaseModel):
         if not isinstance(value, int) or not (1 <= value <= 5):
             raise ValueError("Rating must be an integer between 1 and 5")
         self._rating = value
-        
+
     def to_dict(self):
         review_dict = super().to_dict()
         review_dict['text'] = self.text

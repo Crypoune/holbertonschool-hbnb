@@ -12,7 +12,7 @@ place_model = api.model('Place', {
     'latitude':    fields.Float(required=True, description="La latitude"),
     'longitude':   fields.Float(required=True, description="La longitude"),
     # 👇 PASSER REQUIRED À FALSE
-    'owner_id':    fields.String(required=False, description="L'ID du propriétaire (Auto JWT)"), 
+    'owner_id':    fields.String(required=False, description="L'ID du propriétaire (Auto JWT)"),
 })
 
 
@@ -73,7 +73,7 @@ class PlaceResource(Resource):
                 'first_name': owner.first_name,
                 'last_name':  owner.last_name,
             } if owner else None,
-            'amenities': place.amenities,
+            'amenities': [a.to_dict() for a in place.amenities],
         }, 200
 
     @jwt_required()
