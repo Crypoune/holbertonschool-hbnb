@@ -1,3 +1,17 @@
+-- ============================================================
+-- HBnB Database Schema
+-- ============================================================
+-- Ce script crée l'ensemble des tables de la base de données
+-- HBnB avec toutes les contraintes et relations nécessaires.
+--
+-- Ordre de création (respecte les dépendances FK) :
+--   1. users
+--   2. places       (FK → users)
+--   3. reviews      (FK → users, places)
+--   4. amenities
+--   5. place_amenity (FK → places, amenities)
+-- ============================================================
+
 CREATE TABLE IF NOT EXISTS users (
     id CHAR(36) PRIMARY KEY,
     first_name VARCHAR(255),
