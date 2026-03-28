@@ -1,4 +1,4 @@
-# HolbertonBnB (HBnB) — Part 2: Business Logic & REST API
+# HolbertonBnB (HBnB) — Part 3: Authentication & Database
 
 A simplified AirBnB clone implementing a RESTful API and business logic layer using Python, Flask, and Flask-RESTx. The project is built on a modular, three-tier architecture that cleanly separates presentation, business logic, and persistence concerns — designed to scale toward database integration and authentication in future parts.
 
@@ -28,36 +28,28 @@ hbnb/
 ├── run.py                          # Application entry point
 ├── config.py                       # Environment-based configuration
 ├── requirements.txt                # Python dependencies
-│
 ├── app/
 │   ├── __init__.py                 # Application Factory — create_app()
-│   │
 │   ├── api/
 │   │   └── v1/
 │   │       ├── __init__.py         # Namespace registration
 │   │       ├── users.py            # User endpoints
 │   │       ├── places.py           # Place endpoints
 │   │       ├── reviews.py          # Review endpoints
-│   │       ├── amenities.py        # Amenity endpoints
-│   │       └── bookings.py         # Booking endpoints
-│   │
+│   │       └── amenities.py        # Amenity endpoints
 │   ├── models/
 │   │   ├── __init__.py
 │   │   ├── base_model.py           # Abstract parent class — id, timestamps, to_dict()
 │   │   ├── user.py                 # User model — password property, email validation
 │   │   ├── place.py                # Place model — GPS validation, amenities list
 │   │   ├── review.py               # Review model — rating 1 to 5
-│   │   ├── amenity.py              # Amenity model
-│   │   └── booking.py              # Booking model — state machine, overlap detection
-│   │
+│   │   └── amenity.py              # Amenity model
 │   ├── services/
 │   │   ├── __init__.py             # Singleton: facade = HBnBFacade()
 │   │   └── facade.py               # HBnBFacade — orchestrator, 5 repositories
-│   │
 │   └── persistence/
 │       ├── __init__.py
 │       └── repository.py           # ABC Repository + InMemoryRepository (dict)
-│
 └── tests/
     └── test_hbnb_api.py            # Suite complète — Users, Places, Reviews, Amenities, Bookings
 ```
@@ -123,7 +115,7 @@ HTTP Request -> API (flask-restx) -> Facade (HBnBFacade) -> Model / Repository -
 
    ```bash
    git clone <repository-url>
-   cd holbertonschool-hbnb/part2/hbnb
+   cd holbertonschool-hbnb/part3/
    ```
 
 2. **Set up a virtual environment** (recommended)
@@ -141,6 +133,8 @@ HTTP Request -> API (flask-restx) -> Facade (HBnBFacade) -> Model / Repository -
 ### Running the Application
 
 ```bash
+python3 run.py
+# or
 python run.py
 ```
 
@@ -174,7 +168,6 @@ flask-restx>=1.0.0  # REST API extension with Swagger documentation
 - **Place Management**: Properties with GPS coordinates, pricing, owner, and linked amenities
 - **Review System**: User reviews with ratings (1–5) for places, full CRUD including DELETE
 - **Amenity Management**: Configurable amenities that can be attached to places
-- **Booking System**: Reservations with date conflict detection, state machine (pending / confirmed / cancelled), and enriched responses
 
 ### Technical Features
 
@@ -183,7 +176,6 @@ flask-restx>=1.0.0  # REST API extension with Swagger documentation
 - **Data Serialization**: `to_dict()` on every model converts Python objects to JSON-compatible dicts, excluding sensitive fields
 - **Modular Architecture**: Each layer is independently testable and replaceable
 - **Auto-generated Documentation**: Interactive Swagger/OpenAPI UI at the root URL
-- **State Machine**: `Booking` enforces legal status transitions — `cancelled` is a terminal state
 - **Overlap Detection**: `_check_overlap()` prevents double-booking using the interval algorithm: `[A,B]` and `[C,D]` overlap iff `A < D AND B > C`
 
 ---
@@ -281,23 +273,6 @@ The Swagger UI is available at `http://localhost:5000/api/v1/` and allows testin
 | `GET`  | `/api/v1/amenities/`     | List all amenities   | 200          |
 | `GET`  | `/api/v1/amenities/<id>` | Get an amenity by ID | 200          |
 | `PUT`  | `/api/v1/amenities/<id>` | Update an amenity    | 200          |
-
----
-
-### Bookings `/api/v1/bookings/`
-
-| Method   | URL                            | Description                 | Success Code |
-| -------- | ------------------------------ | --------------------------- | ------------ |
-| `POST`   | `/api/v1/bookings/`            | Create a booking            | 201          |
-| `GET`    | `/api/v1/bookings/`            | List all bookings           | 200          |
-| `GET`    | `/api/v1/bookings/<id>`        | Get a booking (enriched)    | 200          |
-| `PUT`    | `/api/v1/bookings/<id>`        | Update dates / guests       | 200          |
-| `DELETE` | `/api/v1/bookings/<id>`        | Delete a booking            | 200          |
-| `PATCH`  | `/api/v1/bookings/<id>/status` | Confirm or cancel a booking | 200          |
-| `GET`    | `/api/v1/bookings/users/<id>`  | All bookings for a user     | 200          |
-| `GET`    | `/api/v1/bookings/places/<id>` | All bookings for a place    | 200          |
-
-> `PATCH` is used for status transitions (not `PUT`) because only the `status` field is modified. Using `PUT` would require sending the entire resource and would semantically imply a full replacement.
 
 ---
 
@@ -452,7 +427,7 @@ class BaseModel(ABC):
         return result
 ```
 
-`BaseModel` is the **abstract parent class** for all models (`User`, `Place`, `Review`, `Amenity`, `Booking`). It automatically provides a UUID4 identifier, two ISO 8601 timestamps, partial update via `update()`, and JSON serialization via `to_dict()`. This is the **DRY** principle — common code written once and inherited by all five models.
+`BaseModel` is the **abstract parent class** for all models (`User`, `Place`, `Review`, `Amenity`). It automatically provides a UUID4 identifier, two ISO 8601 timestamps, partial update via `update()`, and JSON serialization via `to_dict()`. This is the **DRY** principle — common code written once and inherited by all five models.
 
 ---
 
@@ -536,45 +511,6 @@ class Place(BaseModel):
 
 ---
 
-### `app/models/booking.py` — Booking Model (State Machine)
-
-```python
-class Booking(BaseModel):
-    STATUS_PENDING   = 'pending'
-    STATUS_CONFIRMED = 'confirmed'
-    STATUS_CANCELLED = 'cancelled'
-
-    def __init__(self, place_id, user_id, check_in, check_out, guests=1):
-        super().__init__()
-        self.check_in  = self._parse_date(check_in,  'check_in')
-        self.check_out = self._parse_date(check_out, 'check_out')
-        if self.check_out <= self.check_in:
-            raise ValueError("check_out must be strictly after check_in.")
-        if self.check_in < date.today():
-            raise ValueError("check_in cannot be in the past.")
-        if int(guests) < 1:
-            raise ValueError("guests must be at least 1.")
-        self.status = self.STATUS_PENDING      # Always starts as pending
-
-    @property
-    def nights(self):
-        return (self.check_out - self.check_in).days   # Computed dynamically
-
-    def confirm(self):
-        if self.status != self.STATUS_PENDING:
-            raise ValueError("Only pending bookings can be confirmed.")
-        self.status = self.STATUS_CONFIRMED
-
-    def cancel(self):
-        if self.status == self.STATUS_CANCELLED:
-            raise ValueError("Booking is already cancelled.")
-        self.status = self.STATUS_CANCELLED
-```
-
-`Booking` implements a **state machine**. Legal transitions: `pending → confirmed`, `pending → cancelled`, `confirmed → cancelled`. The `cancelled` state is **terminal** — there is no way out. The `nights` property is computed dynamically without storing a value. Class constants (`STATUS_PENDING`, etc.) avoid magic strings — a typo like `'pendng'` would raise an `AttributeError` rather than silently fail.
-
----
-
 ### `app/services/facade.py` — The Facade
 
 ```python
@@ -584,7 +520,6 @@ class HBnBFacade:
         self.place_repo   = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
         self.review_repo  = InMemoryRepository()
-        self.booking_repo = InMemoryRepository()
 
     def create_user(self, user_data):
         user = User(**user_data)       # Instantiate + validate
@@ -598,20 +533,9 @@ class HBnBFacade:
         place = Place(...)
         self.place_repo.add(place)
         return place
-
-    def _check_overlap(self, new_booking, exclude_id=None):
-        for b in self.booking_repo.get_all():
-            if b.place_id != new_booking.place_id:
-                continue
-            if b.status == 'cancelled':        # Cancelled bookings free the dates
-                continue
-            # Two intervals [A,B] and [C,D] overlap iff A < D AND B > C
-            if new_booking.check_in < b.check_out and \
-               new_booking.check_out > b.check_in:
-                raise ValueError("Dates conflict with existing booking.")
 ```
 
-`HBnBFacade` is the **orchestrator**. It owns 5 repositories (one per entity), exposes high-level methods to the API layer (`create_user`, `create_place`, `create_booking`...), and centralizes cross-cutting rules like date overlap detection. API endpoints call the Facade — they have **no direct knowledge of repositories**.
+`HBnBFacade` is the **orchestrator**. It owns 5 repositories (one per entity), exposes high-level methods to the API layer (`create_user`, `create_place`...), and centralizes cross-cutting rules like date overlap detection. API endpoints call the Facade — they have **no direct knowledge of repositories**.
 
 ---
 
@@ -649,41 +573,6 @@ Each class inherits from `Resource` (flask-restx). The methods `get()`, `post()`
 
 ---
 
-### `app/api/v1/bookings.py` — Booking Status Endpoint
-
-```python
-@api.route('/<string:booking_id>/status')
-class BookingStatus(Resource):
-    @api.expect(status_model, validate=True)
-    def patch(self, booking_id):
-        booking = _get_or_404(booking_id)
-        new_status = api.payload['status']
-        try:
-            if new_status == 'confirmed':
-                booking.confirm()      # State machine transition
-            elif new_status == 'cancelled':
-                booking.cancel()
-        except ValueError as e:
-            api.abort(400, str(e))     # Illegal transition -> 400
-        return _enrich(booking), 200
-
-def _enrich(booking):
-    data = booking.to_dict()
-    place = facade.get_place(booking.place_id)
-    user  = facade.get_user(booking.user_id)
-    if place:
-        data['place_title']     = place.title
-        data['price_per_night'] = place.price
-        data['total_price']     = round(place.price * booking.nights, 2)
-    if user:
-        data['guest_name'] = f'{user.first_name} {user.last_name}'
-    return data
-```
-
-`PATCH` is used instead of `PUT` because only the `status` field changes — a partial update, not a full resource replacement. `_enrich()` adds computed data to the response: place title, guest name, and total price (`price_per_night × nights`). This avoids N+1 API calls — the client gets all needed information in a single response.
-
----
-
 ## Design Patterns
 
 | Pattern                 | Where used                                                  | What it solves                                                                                                                                    |
@@ -693,7 +582,6 @@ def _enrich(booking):
 | **Singleton**           | `app/services/__init__.py`                                  | Ensures one shared `HBnBFacade` instance across the entire application — one source of truth for all RAM data.                                    |
 | **Application Factory** | `app/__init__.py`                                           | Creates the Flask app inside `create_app()`, allowing multiple instances with different configurations (dev, prod, test).                         |
 | **ABC / Interface**     | `app/persistence/repository.py`, `app/models/base_model.py` | Defines contracts via `@abstractmethod`. Any class that skips an implementation raises `TypeError` at instantiation.                              |
-| **State Machine**       | `app/models/booking.py`                                     | Enforces legal status transitions (`pending → confirmed/cancelled`). `cancelled` is terminal. Illegal transitions raise `ValueError → 400`.       |
 
 ---
 
@@ -716,18 +604,16 @@ The test suite uses the three team members as test identities, each with a defin
 | User                  | Email                           | Role in tests                                          |
 | --------------------- | ------------------------------- | ------------------------------------------------------ |
 | **Arnaud Messenet**   | `arnaud.messenet@example.com`   | Owner / host — creates places                          |
-| **Valentin Dardenne** | `valentin.dardenne@example.com` | Guest — makes bookings and reviews                     |
 | **Thomas Haenel**     | `thomas.haenel@example.com`     | Second owner — used in update and multi-user scenarios |
 
 ### What is tested
 
-| Class           | Test cases                                                                                                                                                                                                                                                        |
-| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `TestUsers`     | 201 success, 400 (empty name, invalid email, duplicate email), 200/404 GET, 200/404 PUT                                                                                                                                                                           |
-| `TestPlaces`    | 201 success, 400 (empty title, negative price, invalid GPS, unknown owner), boundary lat/lon (-90/90, -180/180), 200/404 GET and PUT                                                                                                                              |
-| `TestReviews`   | 201 success, 400 (empty text, rating 0 or 6, unknown user/place), 200/404 GET and PUT, 200/404 DELETE, GET reviews by place                                                                                                                                       |
-| `TestAmenities` | 201 success, 400 (empty name, missing name), 200/404 GET and PUT                                                                                                                                                                                                  |
-| `TestBookings`  | 201, 404 (invalid place/user), 400 (check_out <= check_in, guests=0, past check_in), **409** (date overlap), 201 (adjacent dates allowed), state transitions (confirm/cancel), 400 (illegal transition), DELETE, GET by user/place, cancelled booking frees dates |
+| Class           | Test cases                                                                                                                           |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `TestUsers`     | 201 success, 400 (empty name, invalid email, duplicate email), 200/404 GET, 200/404 PUT                                              |
+| `TestPlaces`    | 201 success, 400 (empty title, negative price, invalid GPS, unknown owner), boundary lat/lon (-90/90, -180/180), 200/404 GET and PUT |
+| `TestReviews`   | 201 success, 400 (empty text, rating 0 or 6, unknown user/place), 200/404 GET and PUT, 200/404 DELETE, GET reviews by place          |
+| `TestAmenities` | 201 success, 400 (empty name, missing name), 200/404 GET and PUT                                                                     |
 
 ### Example test — cURL
 
@@ -737,30 +623,14 @@ curl -X POST http://localhost:5000/api/v1/users/ \
      -H "Content-Type: application/json" \
      -d '{"first_name": "Arnaud", "last_name": "Messenet", "email": "arnaud.messenet@example.com", "password": "pass"}'
 
-# Create a user (Valentin as guest)
-curl -X POST http://localhost:5000/api/v1/users/ \
-     -H "Content-Type: application/json" \
-     -d '{"first_name": "Valentin", "last_name": "Dardenne", "email": "valentin.dardenne@example.com", "password": "pass"}'
-
 # List all places
 curl -X GET http://localhost:5000/api/v1/places/
-
-# Create a booking
-curl -X POST http://localhost:5000/api/v1/bookings/ \
-     -H "Content-Type: application/json" \
-     -d '{"place_id": "<place_id>", "user_id": "<user_id>", "check_in": "2026-04-01", "check_out": "2026-04-05", "guests": 2}'
-
-# Confirm a booking
-curl -X PATCH http://localhost:5000/api/v1/bookings/<booking_id>/status \
-     -H "Content-Type: application/json" \
-     -d '{"status": "confirmed"}'
-```
 
 ---
 
 ## Project Vision
 
-### Current Phase — Part 2
+### Current Phase — Part 3
 
 - RESTful API with full CRUD operations for all five entities
 - Business logic with two-level validation (format + business rules)
