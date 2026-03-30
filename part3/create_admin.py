@@ -5,12 +5,12 @@ from app.services import facade
 app = create_app('config.DevelopmentConfig')
 
 with app.app_context():
-    print("👑 --- OUTIL DE GESTION ADMINISTRATEUR --- 👑")
+    print("--- CREATION D'UN ADMINISTRATEUR ---")
     email = input("Entrez l'email de l'administrateur : ")
-    
+
     # 1. On cherche si cet utilisateur existe déjà
     user = facade.get_user_by_email(email)
-    
+
     if user:
         # Si oui, on le "promeut" (on lui donne les droits Admin)
         if user.is_admin:
@@ -25,7 +25,7 @@ with app.app_context():
         first_name = input("Prénom : ")
         last_name = input("Nom : ")
         password = input("Mot de passe : ")
-        
+
         admin_data = {
             'first_name': first_name,
             'last_name': last_name,
@@ -33,7 +33,7 @@ with app.app_context():
             'password': password,
             'is_admin': True
         }
-        
+
         try:
             facade.create_user(admin_data)
             print(f"✅ Succès ! Le Super-Admin {email} a été créé.")
