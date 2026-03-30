@@ -15,10 +15,14 @@ class Login(Resource):
     @api.expect(login_model)
     def post(self):
         """Authentifie l'utilisateur et renvoie un token JWT"""
-        credentials = api.payload
-        user = facade.get_user_by_email(credentials['email'])
+        credentials = api.payload or {}
+        email = credentials.get('email')
+        password = credentials.get('password')
+        if not email or not password:
+            return {'error': 'Email and password are required'}, 400
+        user = facade.get_user_by_email(email)
 
-        if not user or not user.verify_password(credentials['password']):
+        if not user or not user.verify_password(password):
             return {'error': 'Invalid credentials'}, 401
 
         access_token = create_access_token(
@@ -35,4 +39,3 @@ class ProtectedResource(Resource):
         """Un endpoint protégé qui nécessite un token JWT valide"""
         current_user = get_jwt_identity()
         return {'message': f'Hello, user {current_user}'}, 200
-    

@@ -5,11 +5,11 @@
 -- HBnB avec toutes les contraintes et relations nécessaires.
 --
 -- Ordre de création (respecte les dépendances FK) :
---   1. users
---   2. places       (FK → users)
---   3. reviews      (FK → users, places)
---   4. amenities
---   5. place_amenity (FK → places, amenities)
+-- 1. users
+-- 2. places (FK → users)
+-- 3. reviews (FK → users, places)
+-- 4. amenities
+-- 5. place_amenity (FK → places, amenities)
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS users (
@@ -18,7 +18,9 @@ CREATE TABLE IF NOT EXISTS users (
     last_name VARCHAR(255),
     email VARCHAR(255) UNIQUE,
     password VARCHAR(255),
-    is_admin BOOLEAN DEFAULT FALSE
+    is_admin BOOLEAN DEFAULT FALSE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS places (
@@ -29,7 +31,9 @@ CREATE TABLE IF NOT EXISTS places (
     latitude FLOAT,
     longitude FLOAT,
     owner_id CHAR(36),
-    
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
     FOREIGN KEY (owner_id) REFERENCES users(id)
 );
 
@@ -39,6 +43,8 @@ CREATE TABLE IF NOT EXISTS reviews (
     rating INT CHECK (rating >= 1 AND rating <= 5),
     user_id CHAR(36),
     place_id CHAR(36),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (place_id) REFERENCES places(id),
@@ -48,7 +54,9 @@ CREATE TABLE IF NOT EXISTS reviews (
 
 CREATE TABLE IF NOT EXISTS amenities (
     id CHAR(36) PRIMARY KEY,
-    name VARCHAR(255) UNIQUE
+    name VARCHAR(255) UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS place_amenity (

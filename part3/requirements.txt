@@ -4,3 +4,4 @@ flask-jwt-extended
 sqlalchemy
 flask-sqlalchemy
 flask-bcrypt
+pytest
