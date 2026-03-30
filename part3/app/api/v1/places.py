@@ -11,7 +11,6 @@ place_model = api.model('Place', {
     'price':       fields.Float(required=True, description="Le prix par nuit"),
     'latitude':    fields.Float(required=True, description="La latitude"),
     'longitude':   fields.Float(required=True, description="La longitude"),
-    # 👇 PASSER REQUIRED À FALSE
     'owner_id':    fields.String(required=False, description="L'ID du propriétaire (Auto JWT)"),
 })
 
@@ -37,7 +36,7 @@ class PlaceList(Resource):
         """Créer un nouveau lieu (authentifié)"""
         current_user_id = get_jwt_identity()
         data = dict(api.payload)
-        data['owner_id'] = current_user_id  # force l'owner à l'user connecté
+        data['owner_id'] = current_user_id  # Associe automatiquement le lieu à l'utilisateur connecté
         try:
             new_place = facade.create_place(data)
             return {
