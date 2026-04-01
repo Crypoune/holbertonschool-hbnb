@@ -25,45 +25,47 @@ A simplified AirBnB clone implementing a RESTful API secured with JWT authentica
 ## Project Architecture
 
 ```
-part3/
-├── run.py                              # Application entry point
-├── config.py                           # Environment-based configuration (Dev / Prod)
-├── create_admin.py                     # CLI tool to create or promote admin users
-├── requirements.txt                    # Python dependencies
-├── sql/
-│   ├── schema.sql                      # Raw SQL — full database schema
-│   └── seed.sql                        # Raw SQL — initial data (admin + amenities)
 ├── app/
-│   ├── __init__.py                     # Application Factory — create_app(), db, bcrypt, jwt
 │   ├── api/
-│   │   └── v1/
-│   │       ├── __init__.py
-│   │       ├── auth.py                 # JWT login endpoint + protected test route
-│   │       ├── users.py                # User endpoints (admin-only creation)
-│   │       ├── places.py               # Place endpoints (JWT-protected writes)
-│   │       ├── reviews.py              # Review endpoints (JWT-protected writes)
-│   │       └── amenities.py            # Amenity endpoints (admin-only writes)
+│   │   ├── v1/
+│   │   │   ├── __init__.py
+│   │   │   ├── amenities.py                 # Amenity endpoints (admin-only writes)
+│   │   │   ├── auth.py                      # JWT login endpoint + protected test route
+│   │   │   ├── places.py                    # Place endpoints (JWT-protected writes)
+│   │   │   ├── reviews.py                   # Review endpoints (JWT-protected writes)
+│   │   │   └── users.py                     # User endpoints (admin-only creation)
+│   │   └── __init__.py
 │   ├── models/
 │   │   ├── __init__.py
-│   │   ├── base_model.py               # Abstract SQLAlchemy base — id, timestamps
-│   │   ├── user.py                     # User model — bcrypt hashing, email validation
-│   │   ├── place.py                    # Place model — GPS validation, owner FK
-│   │   ├── review.py                   # Review model — rating 1–5, user/place FKs
-│   │   └── amenity.py                  # Amenity model — many-to-many with Place
+│   │   ├── amenity.py                       # Amenity model — many-to-many with Place
+│   │   ├── base_model.py                    # Abstract SQLAlchemy base — id, timestamps
+│   │   ├── place.py                         # Place model — GPS validation, owner FK
+│   │   ├── review.py                        # Review model — rating 1–5, user/place FKs
+│   │   └── user.py                          # User model — bcrypt hashing, email validation
+│   ├── persistence/
+│   │   ├── __init__.py
+│   │   └── repository.py                    # ABC Repository + SQLAlchemyRepository
 │   ├── services/
-│   │   ├── __init__.py                 # Singleton: facade = HBnBFacade()
-│   │   ├── facade.py                   # HBnBFacade — orchestrator
-│   │   └── repositories/
-│   │       ├── __init__.py
-│   │       ├── user_repository.py      # UserRepository — get_user_by_email()
-│   │       ├── place_repository.py     # PlaceRepository
-│   │       ├── review_repository.py    # ReviewRepository — get_reviews_by_place()
-│   │       └── amenity_repository.py   # AmenityRepository
-│   └── persistence/
-│       ├── __init__.py
-│       └── repository.py               # ABC Repository + SQLAlchemyRepository
-└── tests/
-    └── test_hbnb_api.py                # Full test suite — JWT, Users, Places, Reviews, Amenities
+│   │   ├── repositories/
+│   │   │   ├── __init__.py
+│   │   │   ├── amenity_repository.py        # AmenityRepository
+│   │   │   ├── place_repository.py          # PlaceRepository
+│   │   │   ├── review_repository.py         # ReviewRepository — get_reviews_by_place()
+│   │   │   └── user_repository.py           # UserRepository — get_user_by_email()
+│   │   ├── __init__.py
+│   │   └── facade.py
+│   └── __init__.py                          # Application Factory — create_app(), db, bcrypt, jwt
+├── sql/
+│   ├── schema.sql                           # Raw SQL — full database schema
+│   └── seed.sql                             # Raw SQL — initial data (admin + amenities)
+├── tests/
+│   ├── crud_test.sql
+│   └── test_hbnb_api.py                     # Full test suite — JWT, Users, Places, Reviews, Amenities
+├── .gitignore
+├── config.py                                 # Environment-based configuration (Dev / Prod)
+├── create_admin.py                          # CLI tool to create or promote admin users
+├── requirements.txt                         # Python dependencies
+└── run.py                                   # Application entry point
 ```
 
 ---
