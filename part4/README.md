@@ -28,7 +28,7 @@ A simplified AirBnB clone implementing a RESTful API secured with JWT authentica
 ├── app/
 │   ├── api/
 │   │   ├── v1/
-│   │   │   ├── __init__.py
+│   │   │   ├── __init__.py                  #
 │   │   │   ├── amenities.py                 # Amenity endpoints (admin-only writes)
 │   │   │   ├── auth.py                      # JWT login endpoint + protected test route
 │   │   │   ├── places.py                    # Place endpoints (JWT-protected writes)
@@ -36,32 +36,42 @@ A simplified AirBnB clone implementing a RESTful API secured with JWT authentica
 │   │   │   └── users.py                     # User endpoints (admin-only creation)
 │   │   └── __init__.py
 │   ├── models/
-│   │   ├── __init__.py
+│   │   ├── __init__.py                      #
 │   │   ├── amenity.py                       # Amenity model — many-to-many with Place
 │   │   ├── base_model.py                    # Abstract SQLAlchemy base — id, timestamps
 │   │   ├── place.py                         # Place model — GPS validation, owner FK
 │   │   ├── review.py                        # Review model — rating 1–5, user/place FKs
 │   │   └── user.py                          # User model — bcrypt hashing, email validation
+│   ├── frontend/
+│   │   ├── images/                          #
+│   │   ├── add_reviews.html                 #
+│   │   ├── index.html                       #
+│   │   ├── login.html                       #
+│   │   ├── place.html                       #
+│   │   ├── README.md                        #
+│   │   ├── register.html                    #
+│   │   ├── scripts.js                       #
+│   │   └── styles.css                       #
 │   ├── persistence/
-│   │   ├── __init__.py
+│   │   ├── __init__.py                      #
 │   │   └── repository.py                    # ABC Repository + SQLAlchemyRepository
 │   ├── services/
 │   │   ├── repositories/
-│   │   │   ├── __init__.py
+│   │   │   ├── __init__.py                  #
 │   │   │   ├── amenity_repository.py        # AmenityRepository
 │   │   │   ├── place_repository.py          # PlaceRepository
 │   │   │   ├── review_repository.py         # ReviewRepository — get_reviews_by_place()
 │   │   │   └── user_repository.py           # UserRepository — get_user_by_email()
-│   │   ├── __init__.py
-│   │   └── facade.py
+│   │   ├── __init__.py                      #
+│   │   └── facade.py                        #
 │   └── __init__.py                          # Application Factory — create_app(), db, bcrypt, jwt
 ├── sql/
 │   ├── schema.sql                           # Raw SQL — full database schema
 │   └── seed.sql                             # Raw SQL — initial data (admin + amenities)
 ├── tests/
-│   ├── crud_test.sql
+│   ├── crud_test.sql                        #
 │   └── test_hbnb_api.py                     # Full test suite — JWT, Users, Places, Reviews, Amenities
-├── .gitignore
+├── .gitignore                               #
 ├── config.py                                 # Environment-based configuration (Dev / Prod)
 ├── create_admin.py                          # CLI tool to create or promote admin users
 ├── requirements.txt                         # Python dependencies
