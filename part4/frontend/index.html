@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HBnB — Find your place</title>
+    <link rel="icon" type="image/png" href="images/icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <a href="index.html" class="logo-text">
+        <img src="images/logo.png" alt="HBnB logo" />
+      </a>
+      <nav>
+        <a href="index.html" class="active">Places</a>
+        <a href="login.html" class="login-button" id="login-link">Login</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1 class="section-title">Discover places to stay</h1>
+      <p class="section-subtitle">Unique homes, handpicked for you.</p>
+
+      <div class="filter-bar">
+        <label for="price-filter">Filter by price:</label>
+        <select id="price-filter">
+          <option value="all">All</option>
+          <option value="10">Up to $10 / night</option>
+          <option value="50">Up to $50 / night</option>
+          <option value="100">Up to $100 / night</option>
+        </select>
+      </div>
+
+      <section class="places-grid" id="places-list">
+        <!-- Populated dynamically by scripts.js -->
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 HBnB. All rights reserved.</p>
+    </footer>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>
