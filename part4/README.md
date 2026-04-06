@@ -310,7 +310,7 @@ flask-jwt-extended>=4.0.0
 
 ## API Endpoints
 
-The Swagger UI is available at `http://localhost:5000/api/v1/` and allows testing all endpoints interactively. Protected endpoints require a `Bearer <token>` in the `Authorization` header.
+The Swagger UI is available at `http://127.0.0.1:5000/api/v1/` and allows testing all endpoints interactively. Protected endpoints require a `Bearer <token>` in the `Authorization` header.
 
 ### Authentication `/api/v1/auth/`
 
