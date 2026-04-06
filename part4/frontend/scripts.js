@@ -5,7 +5,7 @@
    Task 03 : Place details — fetch & display
    ============================================= */
 
-const API_URL = "http://localhost:5000"; // ← adapte à ton URL d'API
+const API_URL = "http://127.0.0.1:5000";
 
 /* ════════════════════════════════════════════
    COOKIE HELPERS
@@ -20,7 +20,7 @@ function getCookie(name) {
 
 function setCookie(name, value, days = 7) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
-  document.cookie = `${name}=${value}; path=/; expires=${expires}`;
+  document.cookie = `${name}=${value}; path=/; expires=${expires}; SameSite=Lax`;
 }
 
 function deleteCookie(name) {
@@ -100,6 +100,7 @@ function initLoginPage() {
 
       if (response.ok) {
         const data = await response.json();
+        console.log("data reçu:", data);
         setCookie("token", data.access_token);
         window.location.href = "index.html";
       } else {
@@ -183,7 +184,7 @@ function displayPlaces(places) {
     article.dataset.price = place.price;
 
     article.innerHTML = `
-      <img src="${place.image || "images/place1.jpg"}" alt="${place.title}" />
+      <img src="images/places/${place.image_url || "default_place.jpg"}" alt="${place.title}" />
       <div class="place-card-body">
         <h3>${place.title}</h3>
         <p class="price">$${place.price} <span>/ night</span></p>
@@ -252,19 +253,41 @@ function initPlacePage() {
 
 async function fetchPlaceDetails(placeId) {
   try {
-    const response = await fetch(`${API_URL}/api/v1/places/${placeId}`, {
-      method: "GET",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    });
+    const [placeRes, reviewsRes] = await Promise.all([
+      fetch(`${API_URL}/api/v1/places/${placeId}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }),
+      fetch(`${API_URL}/api/v1/places/${placeId}/reviews`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }),
+    ]);
 
-    if (!response.ok) {
+    if (!placeRes.ok) {
       document.getElementById("place-details").innerHTML =
-        `<p class="no-results">Could not load place details (${response.status}).</p>`;
+        `<p class="no-results">Could not load place details (${placeRes.status}).</p>`;
       return;
     }
 
-    const place = await response.json();
+    const place = await placeRes.json();
+    const reviews = reviewsRes.ok ? await reviewsRes.json() : [];
+
+    place.reviews = await Promise.all(
+      reviews.map(async (r) => {
+        try {
+          const userRes = await fetch(`${API_URL}/api/v1/users/${r.user_id}`);
+          if (userRes.ok) {
+            const user = await userRes.json();
+            r.user = `${user.first_name} ${user.last_name}`;
+          }
+        } catch (_) {
+          /* ignore */
+        }
+        return r;
+      }),
+    );
+
     displayPlaceDetails(place);
   } catch (err) {
     document.getElementById("place-details").innerHTML =
@@ -316,7 +339,7 @@ function displayPlaceDetails(place) {
     <article class="place-details">
       <img
         class="place-hero"
-        src="${place.image || "images/place1.jpg"}"
+        src="images/places/${place.image_url || "default_place.jpg"}"
         alt="${place.title}"
       />
       <div class="place-info">
