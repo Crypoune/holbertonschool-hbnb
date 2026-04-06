@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS places (
     latitude FLOAT,
     longitude FLOAT,
     owner_id CHAR(36),
+    image_url VARCHAR(255),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
