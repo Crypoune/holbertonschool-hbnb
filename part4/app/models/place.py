@@ -16,6 +16,7 @@ class Place(BaseModel):
     _latitude = db.Column('latitude', db.Float, nullable=False)
     _longitude = db.Column('longitude', db.Float, nullable=False)
     owner_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    image_url = db.Column(db.String(255), nullable=True)
 
     # Relationships
     owner = db.relationship('User', backref='places', lazy=True)
@@ -27,7 +28,7 @@ class Place(BaseModel):
     lazy='subquery'
 )
 
-    def __init__(self, title, description, price, latitude, longitude, owner_id):
+    def __init__(self, title, description, price, latitude, longitude, owner_id, image_url=None):
         super().__init__()
         self.title = title
         self.description = description
@@ -35,6 +36,7 @@ class Place(BaseModel):
         self.latitude = latitude
         self.longitude = longitude
         self.owner_id = owner_id
+        self.image_url = image_url
         self.amenities = []
 
  # ----------------- Price -----------------
@@ -83,5 +85,6 @@ class Place(BaseModel):
         place_dict['latitude'] = self.latitude
         place_dict['longitude'] = self.longitude
         place_dict['owner_id'] = self.owner_id
+        place_dict['image_url'] = self.image_url
         place_dict['amenities'] = [a.to_dict() for a in self.amenities]
         return place_dict
