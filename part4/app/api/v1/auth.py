@@ -9,7 +9,6 @@ login_model = api.model('Login', {
     'password': fields.String(required=True, description='User password')
 })
 
-
 @api.route('/login')
 class Login(Resource):
     @api.expect(login_model)
@@ -18,8 +17,10 @@ class Login(Resource):
         credentials = api.payload or {}
         email = credentials.get('email')
         password = credentials.get('password')
+
         if not email or not password:
             return {'error': 'Email and password are required'}, 400
+
         user = facade.get_user_by_email(email)
 
         if not user or not user.verify_password(password):
