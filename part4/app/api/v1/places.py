@@ -12,6 +12,7 @@ place_model = api.model('Place', {
     'latitude':    fields.Float(required=True, description="La latitude"),
     'longitude':   fields.Float(required=True, description="La longitude"),
     'owner_id':    fields.String(required=False, description="L'ID du propriétaire (Auto JWT)"),
+    'image_url':   fields.String(required=False, description="URL de l'image du lieu"),
 })
 
 
@@ -23,8 +24,8 @@ class PlaceList(Resource):
         """Lister tous les lieux (public)"""
         places = facade.get_all_places()
         return [
-            {'id': p.id, 'title': p.title,
-             'latitude': p.latitude, 'longitude': p.longitude}
+            {'id': p.id, 'title': p.title, 'price': p.price,
+             'latitude': p.latitude, 'longitude': p.longitude, 'image_url': p.image_url}
             for p in places
         ], 200
 
@@ -44,6 +45,7 @@ class PlaceList(Resource):
                 'title':    new_place.title,
                 'price':    new_place.price,
                 'owner_id': new_place.owner_id,
+                'image_url': new_place.image_url,
             }, 201
         except ValueError as e:
             return {'error': str(e)}, 400
@@ -72,6 +74,7 @@ class PlaceResource(Resource):
                 'first_name': owner.first_name,
                 'last_name':  owner.last_name,
             } if owner else None,
+            'image_url': place.image_url,
             'amenities': [a.to_dict() for a in place.amenities],
         }, 200
 
