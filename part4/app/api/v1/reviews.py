@@ -8,8 +8,6 @@ review_model = api.model('Review', {
     'text':     fields.String(required=True, description='Review text'),
     'rating':   fields.Integer(required=True, description='Rating (1-5)'),
     'place_id': fields.String(required=True, description='Place ID'),
-    # 👇 PASSER REQUIRED À FALSE
-    'user_id':  fields.String(required=False, description='User ID (Auto JWT)'), 
 })
 
 @api.route('/')
@@ -106,4 +104,3 @@ class ReviewResource(Resource):
 
         facade.delete_review(review_id)
         return {'message': 'Review deleted successfully'}, 200
-    
