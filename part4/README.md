@@ -76,7 +76,6 @@ A simplified AirBnB clone with a fully functional web client built in HTML5, CSS
 │   └── test_hbnb_api.py                     # Full test suite — JWT, Users, Places, Reviews, Amenities
 ├── .gitignore
 ├── config.py                                # Environment-based configuration (Dev / Prod)
-├── create_admin.py                          # CLI tool to create or promote admin users
 ├── requirements.txt                         # Python dependencies
 └── run.py                                   # Application entry point
 ```
@@ -238,24 +237,19 @@ Open the `frontend/` folder with the **Live Server** extension in VS Code, or op
 
 ### Initializing the Database
 
-On first run, initialize the SQLite database:
+Run the SQL scripts to create the schema and populate demo data:
 
 ```bash
-flask shell
->>> from app import db
->>> db.create_all()
->>> exit()
+sqlite3 instance/dev.db < sql/schema.sql
+sqlite3 instance/dev.db < sql/seed.sql
 ```
 
-### Creating an Administrator
+The `seed.sql` file includes:
 
-Use the provided CLI tool to create or promote an admin user:
+- An admin user (`admin@hbnb.io` / `admin1234`)
+- Demo users, places, reviews, and amenities with place-amenity associations
 
-```bash
-python3 create_admin.py
-```
-
-The script will prompt for email, first name, last name, and password. If the user already exists, it will be promoted to admin.
+> To regenerate bcrypt hashes for the seed file, use `generate_seed_values.py`.
 
 ### Environment Variables
 
@@ -795,8 +789,8 @@ The facade is **re-instantiated** inside the fixture to ensure it points to the 
 ### Example — cURL
 
 ```bash
-# Login
-curl -X POST http://localhost:5000/api/v1/auth/login \
+# Login as admin (seeded by seed.sql)
+curl -X POST http://127.0.0.1:5000/api/v1/auth/login \
      -H "Content-Type: application/json" \
      -d '{"email": "admin@hbnb.io", "password": "admin1234"}'
 
