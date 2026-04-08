@@ -14,10 +14,10 @@ DELETE FROM users;
 -- 2. Insertion des utilisateurs (avec UUIDs)
 INSERT OR IGNORE INTO users (id, first_name, last_name, email, password, is_admin)
 VALUES
-    ('36c9050e-ddd3-4c3b-9731-9f487208bbc1', 'Admin', 'HBnB', 'admin@hbnb.io', 'admin1234', TRUE),
-    ('550e8400-e29b-41d4-a716-446655440001', 'Arnaud', 'Messenet', 'arnaud.messenet@hbnb.io', 'password123', FALSE),
-    ('550e8400-e29b-41d4-a716-446655440002', 'Thomas', 'Haenel', 'thomas.haenel@hbnb.io', 'password123', FALSE),
-    ('550e8400-e29b-41d4-a716-446655440003', 'David', 'Dufont', 'david.dufont@hbnb.io', 'password123', FALSE);
+    ('36c9050e-ddd3-4c3b-9731-9f487208bbc1', 'Admin', 'HBnB', 'admin@hbnb.io', '$2b$12$Sex64n/VkLaMb04LlSoj0eTGtEi0YQ13/XeE.YmVVBRj3pfvUuipu', TRUE),
+    ('550e8400-e29b-41d4-a716-446655440001', 'Arnaud', 'Messenet', 'arnaud.messenet@hbnb.io', '$2b$12$qJ41T0sg2ebzmks1sxCiaeHkqnElp3U.ITIHqKF9VhyC.pdiDDl12', FALSE),
+    ('550e8400-e29b-41d4-a716-446655440002', 'Thomas', 'Haenel', 'thomas.haenel@hbnb.io', '$2b$12$qJ41T0sg2ebzmks1sxCiaeHkqnElp3U.ITIHqKF9VhyC.pdiDDl12', FALSE),
+    ('550e8400-e29b-41d4-a716-446655440003', 'David', 'Dufont', 'david.dufont@hbnb.io', '$2b$12$qJ41T0sg2ebzmks1sxCiaeHkqnElp3U.ITIHqKF9VhyC.pdiDDl12', FALSE);
 
 -- 3. Insertion des équipements (amenities)
 INSERT OR IGNORE INTO amenities (id, name)
