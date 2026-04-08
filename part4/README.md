@@ -1,6 +1,6 @@
-# HolbertonBnB (HBnB) — Part 4: Authentication & Database
+# HolbertonBnB (HBnB) — Part 4: Simple Web Client
 
-A simplified AirBnB clone implementing a RESTful API secured with JWT authentication and backed by a persistent SQLite database. Built with Python, Flask, Flask-RESTx, SQLAlchemy, and Flask-JWT-Extended, the project follows a modular three-tier architecture that cleanly separates presentation, business logic, and persistence concerns.
+A simplified AirBnB clone with a fully functional web client built in HTML5, CSS3, and JavaScript ES6. The frontend connects to the RESTful API secured with JWT authentication and backed by a persistent SQLite database. Built with Python, Flask, Flask-RESTx, SQLAlchemy, Flask-JWT-Extended, and Flask-CORS, the project follows a modular three-tier architecture that cleanly separates presentation, business logic, and persistence concerns.
 
 ---
 
@@ -13,12 +13,13 @@ A simplified AirBnB clone implementing a RESTful API secured with JWT authentica
 5. [Features](#features)
 6. [API Endpoints](#api-endpoints)
 7. [Authentication & Authorization](#authentication--authorization)
-8. [Code Walkthrough](#code-walkthrough)
-9. [Design Patterns](#design-patterns)
-10. [Testing](#testing)
-11. [Technical Glossary](#technical-glossary)
-12. [Resources](#resources)
-13. [Authors](#authors)
+8. [Frontend Web Client](#frontend-web-client)
+9. [Code Walkthrough](#code-walkthrough)
+10. [Design Patterns](#design-patterns)
+11. [Testing](#testing)
+12. [Technical Glossary](#technical-glossary)
+13. [Resources](#resources)
+14. [Authors](#authors)
 
 ---
 
@@ -28,7 +29,7 @@ A simplified AirBnB clone implementing a RESTful API secured with JWT authentica
 ├── app/
 │   ├── api/
 │   │   ├── v1/
-│   │   │   ├── __init__.py                  #
+│   │   │   ├── __init__.py
 │   │   │   ├── amenities.py                 # Amenity endpoints (admin-only writes)
 │   │   │   ├── auth.py                      # JWT login endpoint + protected test route
 │   │   │   ├── places.py                    # Place endpoints (JWT-protected writes)
@@ -36,43 +37,45 @@ A simplified AirBnB clone implementing a RESTful API secured with JWT authentica
 │   │   │   └── users.py                     # User endpoints (admin-only creation)
 │   │   └── __init__.py
 │   ├── models/
-│   │   ├── __init__.py                      #
+│   │   ├── __init__.py
 │   │   ├── amenity.py                       # Amenity model — many-to-many with Place
 │   │   ├── base_model.py                    # Abstract SQLAlchemy base — id, timestamps
 │   │   ├── place.py                         # Place model — GPS validation, owner FK
 │   │   ├── review.py                        # Review model — rating 1–5, user/place FKs
 │   │   └── user.py                          # User model — bcrypt hashing, email validation
-│   ├── frontend/
-│   │   ├── images/                          #
-│   │   ├── add_reviews.html                 #
-│   │   ├── index.html                       #
-│   │   ├── login.html                       #
-│   │   ├── place.html                       #
-│   │   ├── README.md                        #
-│   │   ├── register.html                    #
-│   │   ├── scripts.js                       #
-│   │   └── styles.css                       #
 │   ├── persistence/
-│   │   ├── __init__.py                      #
+│   │   ├── __init__.py
 │   │   └── repository.py                    # ABC Repository + SQLAlchemyRepository
 │   ├── services/
 │   │   ├── repositories/
-│   │   │   ├── __init__.py                  #
+│   │   │   ├── __init__.py
 │   │   │   ├── amenity_repository.py        # AmenityRepository
 │   │   │   ├── place_repository.py          # PlaceRepository
 │   │   │   ├── review_repository.py         # ReviewRepository — get_reviews_by_place()
 │   │   │   └── user_repository.py           # UserRepository — get_user_by_email()
-│   │   ├── __init__.py                      #
-│   │   └── facade.py                        #
-│   └── __init__.py                          # Application Factory — create_app(), db, bcrypt, jwt
+│   │   ├── __init__.py                      # Singleton: facade = HBnBFacade()
+│   │   └── facade.py                        # HBnBFacade — orchestrator
+│   └── __init__.py                          # Application Factory — create_app(), db, bcrypt, jwt, CORS
+├── frontend/
+│   ├── images/
+│   │   ├── amenities/                       # Amenity icons
+│   │   └── places/                          # Place photos
+│   ├── add_reviews.html                     # Add review form (authenticated only)
+│   ├── index.html                           # Main page — list of places
+│   ├── login.html                           # Login form
+│   ├── place.html                           # Place details + inline review form
+│   ├── register.html                        # Registration form (bonus)
+│   ├── scripts.js                           # All client-side JS logic
+│   ├── styles.css                           # Global stylesheet
+│   └── README.md                            # Frontend documentation
 ├── sql/
 │   ├── schema.sql                           # Raw SQL — full database schema
 │   └── seed.sql                             # Raw SQL — initial data (admin + amenities)
 ├── tests/
-│   ├── crud_test.sql                        #
+│   ├── crud_test.sql
 │   └── test_hbnb_api.py                     # Full test suite — JWT, Users, Places, Reviews, Amenities
-├── .gitignore                               #
-├── config.py                                 # Environment-based configuration (Dev / Prod)
+├── .gitignore
+├── config.py                                # Environment-based configuration (Dev / Prod)
 ├── create_admin.py                          # CLI tool to create or promote admin users
 ├── requirements.txt                         # Python dependencies
 └── run.py                                   # Application entry point
@@ -128,7 +131,7 @@ HTTP Request → JWT middleware → API (flask-restx) → Facade → Model / Rep
 
 ## Database Schema
 
-The following ER diagram represents the full database structure for Part 3, including all entities, attributes, and relationships.
+The following ER diagram represents the full database structure, including all entities, attributes, and relationships.
 
 ```mermaid
 erDiagram
@@ -200,7 +203,7 @@ erDiagram
 
    ```bash
    git clone <repository-url>
-   cd holbertonschool-hbnb/part3/
+   cd holbertonschool-hbnb/part4/
    ```
 
 2. **Set up a virtual environment**
@@ -224,8 +227,14 @@ python3 run.py
 
 The API will be available at:
 
-- **API Base URL**: `http://localhost:5000/api/v1/`
-- **Interactive Swagger Documentation**: `http://localhost:5000/api/v1/`
+- **API Base URL**: `http://127.0.0.1:5000/api/v1/`
+- **Interactive Swagger Documentation**: `http://127.0.0.1:5000/api/v1/`
+
+### Running the Frontend
+
+Open the `frontend/` folder with the **Live Server** extension in VS Code, or open `frontend/index.html` directly in your browser.
+
+> **Note**: Use `http://127.0.0.1:5500` consistently — the API URL in `scripts.js` is set to `http://127.0.0.1:5000`. Mixing `localhost` and `127.0.0.1` causes cookie issues.
 
 ### Initializing the Database
 
@@ -276,6 +285,7 @@ flask-restx>=1.0.0
 flask-sqlalchemy>=3.0.0
 flask-bcrypt>=1.0.0
 flask-jwt-extended>=4.0.0
+flask-cors>=4.0.0
 ```
 
 ---
@@ -305,12 +315,23 @@ flask-jwt-extended>=4.0.0
 - **Two-Level Validation**: Format validation at API layer + business rule validation at model layer
 - **Repository Pattern**: Swappable persistence layer — `SQLAlchemyRepository` implements the same interface as the former `InMemoryRepository`
 - **Auto-generated Documentation**: Interactive Swagger/OpenAPI UI at the root URL
+- **CORS**: Flask-CORS configured to allow requests from the frontend dev server
+
+### Frontend Features
+
+- **Login / Logout**: JWT token stored in a cookie — header updates dynamically between Login and Logout
+- **Place Listing**: Fetches all places from the API and displays them as cards with title, price, and image
+- **Client-Side Price Filter**: Filter places by max price without reloading the page
+- **Place Details**: Fetches place details, amenities, and reviews — enriches reviews with user names
+- **Inline Review Form**: Authenticated users can submit a review directly on the place page
+- **Add Review Page**: Standalone review form on `add_reviews.html` — redirects to index if not authenticated
+- **Registration** _(bonus)_: `register.html` allows new users to create an account
 
 ---
 
 ## API Endpoints
 
-The Swagger UI is available at `http://127.0.0.1:5000/api/v1/` and allows testing all endpoints interactively. Protected endpoints require a `Bearer <token>` in the `Authorization` header.
+The Swagger UI is available at `http://localhost:5000/api/v1/` and allows testing all endpoints interactively. Protected endpoints require a `Bearer <token>` in the `Authorization` header.
 
 ### Authentication `/api/v1/auth/`
 
@@ -479,6 +500,63 @@ access_token = create_access_token(
 
 ---
 
+## Frontend Web Client
+
+The frontend is a pure HTML5/CSS3/JavaScript ES6 client served from the `frontend/` folder. It communicates with the Flask API via the Fetch API and manages authentication through JWT cookies.
+
+### Pages
+
+| Page           | File               | Auth required    | Description                                                      |
+| -------------- | ------------------ | ---------------- | ---------------------------------------------------------------- |
+| List of Places | `index.html`       | ❌               | Displays all places with price filter                            |
+| Login          | `login.html`       | ❌               | JWT login form — redirects to index on success                   |
+| Place Details  | `place.html`       | ❌ (form hidden) | Place info, amenities, reviews + inline review form              |
+| Add Review     | `add_reviews.html` | ✅               | Standalone review form — redirects to index if not authenticated |
+| Register       | `register.html`    | ❌               | _(bonus)_ New user registration                                  |
+
+### Authentication Flow
+
+```
+1. User submits login form
+2. JS sends POST to /api/v1/auth/login
+3. API returns { access_token: "..." }
+4. JS stores token in cookie (SameSite=Lax, 7 days)
+5. All subsequent API calls include Authorization: Bearer <token>
+6. Header button switches from "Login" to "Logout"
+7. On logout: cookie is deleted, redirect to index
+```
+
+### Key JavaScript Functions
+
+| Function                     | Description                                  |
+| ---------------------------- | -------------------------------------------- |
+| `getCookie(name)`            | Reads a cookie value by name                 |
+| `setCookie(name, value)`     | Stores a cookie with 7-day expiry            |
+| `isAuthenticated()`          | Returns true if JWT cookie exists            |
+| `setupHeaderAuth()`          | Switches Login ↔ Logout in header            |
+| `fetchPlaces()`              | GET all places from API                      |
+| `setupPriceFilter()`         | Client-side price filtering                  |
+| `fetchPlaceDetails(placeId)` | GET place + reviews + user names in parallel |
+| `setupReviewForm(placeId)`   | Wires inline review form submission          |
+| `initAddReviewPage()`        | Handles `add_reviews.html` auth + submission |
+
+### CORS Configuration
+
+The API is configured to accept requests from the frontend dev server:
+
+```python
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://localhost:5500", "http://127.0.0.1:5500"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True,
+    }
+})
+```
+
+---
+
 ## Code Walkthrough
 
 ### `config.py` — Configuration
@@ -508,6 +586,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 bcrypt = Bcrypt()
 jwt = JWTManager()
@@ -516,14 +595,16 @@ db = SQLAlchemy()
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.url_map.strict_slashes = False
     bcrypt.init_app(app)
     jwt.init_app(app)
     db.init_app(app)
+    CORS(app, resources={r"/api/*": {"origins": [...]}})
     # ... namespace registration
     return app
 ```
 
-Three extensions are initialized here: `bcrypt` for password hashing, `jwt` for token management, and `db` for ORM. All are instantiated at module level and bound to the app in `create_app()` — this is the **Application Factory** pattern, which allows different configurations for development, production, and testing.
+Four extensions are initialized here: `bcrypt` for password hashing, `jwt` for token management, `db` for ORM, and `CORS` to allow the frontend dev server to communicate with the API. `strict_slashes = False` prevents Flask from redirecting `/api/v1/places` to `/api/v1/places/`, which would strip the Authorization header and cause 401 errors on the frontend.
 
 ---
 
@@ -763,13 +844,25 @@ curl -X GET http://localhost:5000/api/v1/places/
 - [Flask-RESTx Documentation](https://flask-restx.readthedocs.io/en/latest/)
 - [Flask-JWT-Extended Documentation](https://flask-jwt-extended.readthedocs.io/en/stable/)
 - [Flask-Bcrypt Documentation](https://flask-bcrypt.readthedocs.io/en/latest/)
+- [Flask-CORS Documentation](https://flask-cors.readthedocs.io/en/latest/)
 - [SQLAlchemy Documentation](https://docs.sqlalchemy.org/en/20/)
 - [Flask-SQLAlchemy Documentation](https://flask-sqlalchemy.palletsprojects.com/en/3.x/)
 - [Mermaid.js Documentation](https://mermaid-js.github.io/mermaid/)
 - [JWT.io](https://jwt.io/)
+- [Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+- [Handling Cookies in JavaScript](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie)
 - [OWASP Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
 - [REST API Best Practices](https://restfulapi.net/)
 - [Repository Pattern](https://martinfowler.com/eaaCatalog/repository.html)
+
+---
+
+## Known Limitations & Future Improvements
+
+- **Registration**: User creation is currently restricted to administrators via `create_admin.py` or the Swagger UI. A public registration request system — where users submit a request that an admin approves — could be implemented in a future version.
+- **Admin Dashboard**: A dedicated frontend UI for managing places, users, and amenities without Swagger is a natural next step but was out of scope for this iteration.
+- **Place Images**: Images are currently stored as filenames referencing local files. A future version could support file upload or external URLs.
+- **Token Refresh**: JWT tokens expire after 15 minutes by default. Implementing a refresh token mechanism would improve the user experience.
 
 ---
 
