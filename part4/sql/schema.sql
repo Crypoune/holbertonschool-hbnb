@@ -12,6 +12,12 @@
 -- 5. place_amenity (FK → places, amenities)
 -- ============================================================
 
+DROP TABLE IF EXISTS place_amenity;
+DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS places;
+DROP TABLE IF EXISTS amenities;
+DROP TABLE IF EXISTS users;
+
 CREATE TABLE IF NOT EXISTS users (
     id CHAR(36) PRIMARY KEY,
     first_name VARCHAR(255),
