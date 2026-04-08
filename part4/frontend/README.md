@@ -36,16 +36,14 @@ Open `frontend/index.html` directly in your browser (`file://`). No CORS issues 
 python3 run.py
 ```
 
-If it's your first run, initialize the database and create an admin first:
+If it's your first run, initialize the database with the SQL scripts:
 
 ```bash
-flask shell
->>> from app import db
->>> db.create_all()
->>> exit()
-
-python3 create_admin.py
+sqlite3 instance/dev.db < sql/schema.sql
+sqlite3 instance/dev.db < sql/seed.sql
 ```
+
+This will create the schema and populate demo data including the admin user (`admin@hbnb.io` / `admin1234`).
 
 ---
 
