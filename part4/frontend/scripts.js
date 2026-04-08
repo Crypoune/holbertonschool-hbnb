@@ -271,6 +271,7 @@ async function fetchPlaceDetails(placeId) {
     }
 
     const place = await placeRes.json();
+    console.log("place details:", place);
     const reviews = reviewsRes.ok ? await reviewsRes.json() : [];
 
     place.reviews = await Promise.all(
@@ -346,8 +347,8 @@ function displayPlaceDetails(place) {
         <h1>${place.title}</h1>
 
         <div class="place-meta">
-          <span>🏠 <strong>Host:</strong> ${place.owner || place.host || "N/A"}</span>
-          <span>📍 <strong>Location:</strong> ${place.location || place.city || "N/A"}</span>
+          <span>🏠 <strong>Host:</strong> ${place.owner.first_name} ${place.owner.last_name || "N/A"}</span>
+          <span>📍 <strong>Location:</strong> ${place.latitude && place.longitude ? `${place.latitude}, ${place.longitude}` : "N/A"}</span>
           ${place.max_guests ? `<span>👥 <strong>Guests:</strong> ${place.max_guests} max</span>` : ""}
           ${place.rooms ? `<span>🛏 <strong>Rooms:</strong> ${place.rooms}</span>` : ""}
         </div>
