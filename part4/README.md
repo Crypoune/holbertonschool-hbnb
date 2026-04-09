@@ -60,6 +60,20 @@ A simplified AirBnB clone with a fully functional web client built in HTML5, CSS
 │   ├── images/
 │   │   ├── amenities/                       # Amenity icons
 │   │   └── places/                          # Place photos
+│   ├── scripts/
+│   │   ├── auth/
+│   │   │   ├── cookie.js                    # Gestion des cookies
+│   │   │   └── login.js                     # Logique de login/logout
+│   │   ├── places/
+│   │   │   ├── index.js                     # Logique de la page d'accueil (liste des places)
+│   │   │   └── place.js                     # Logique de la page de détail d'une place
+│   │   ├── reviews/
+│   │   │   ├── reviewForm.js                # Logique du formulaire d'ajout de review (inline)
+│   │   │   └── addReview.js                 # Logique de la page dédiée à l'ajout de review
+│   │   ├── shared/
+│   │   │   ├── header.js                    # Logique du header (auth, etc.)
+│   │   │   └── utils.js                     # Fonctions utilitaires partagées
+│   │   └── main.js                          # Point d'entrée principal
 │   ├── add_reviews.html                     # Add review form (authenticated only)
 │   ├── index.html                           # Main page — list of places
 │   ├── login.html                           # Login form
@@ -853,7 +867,7 @@ curl -X GET http://localhost:5000/api/v1/places/
 
 ## Known Limitations & Future Improvements
 
-- **Registration**: User creation is currently restricted to administrators via `create_admin.py` or the Swagger UI. A public registration request system — where users submit a request that an admin approves — could be implemented in a future version.
+- **Registration**: User creation is currently restricted to administrators via the Swagger UI. A public registration request system — where users submit a request that an admin approves — could be implemented in a future version.
 - **Admin Dashboard**: A dedicated frontend UI for managing places, users, and amenities without Swagger is a natural next step but was out of scope for this iteration.
 - **Place Images**: Images are currently stored as filenames referencing local files. A future version could support file upload or external URLs.
 - **Token Refresh**: JWT tokens expire after 15 minutes by default. Implementing a refresh token mechanism would improve the user experience.
