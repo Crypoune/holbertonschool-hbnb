@@ -6,7 +6,8 @@ from app.services import facade
 api = Namespace('amenities', description='Opérations sur les équipements')
 
 amenity_model = api.model('Amenity', {
-    'name': fields.String(required=True, description="Le nom de l'équipement")
+    'name': fields.String(required=True, description="Le nom de l'équipement"),
+    'image_url': fields.String(description="URL de l'image de l'équipement")
 })
 
 
@@ -17,7 +18,7 @@ class AmenityList(Resource):
     def get(self):
         """Lister toutes les amenities (public)"""
         amenities = facade.get_all_amenities()
-        return [{'id': a.id, 'name': a.name} for a in amenities], 200
+        return [{'id': a.id, 'name': a.name, 'image_url': a.image_url} for a in amenities], 200
 
     @jwt_required()
     @api.expect(amenity_model, validate=True)
@@ -31,7 +32,7 @@ class AmenityList(Resource):
             return {'error': 'Admin privileges required'}, 403
         try:
             new_amenity = facade.create_amenity(api.payload)
-            return {'id': new_amenity.id, 'name': new_amenity.name}, 201
+            return {'id': new_amenity.id, 'name': new_amenity.name, 'image_url': new_amenity.image_url}, 201
         except ValueError as e:
             return {'error': str(e)}, 400
 
@@ -46,7 +47,7 @@ class AmenityResource(Resource):
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             return {'error': 'Amenity non trouvée'}, 404
-        return {'id': amenity.id, 'name': amenity.name}, 200
+        return {'id': amenity.id, 'name': amenity.name, 'image_url': amenity.image_url}, 200
 
     @jwt_required()
     @api.expect(amenity_model, validate=True)

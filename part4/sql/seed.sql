@@ -20,22 +20,21 @@ VALUES
     ('550e8400-e29b-41d4-a716-446655440003', 'David', 'Dufont', 'david.dufont@hbnb.io', '$2b$12$qJ41T0sg2ebzmks1sxCiaeHkqnElp3U.ITIHqKF9VhyC.pdiDDl12', FALSE);
 
 -- 3. Insertion des équipements (amenities)
-INSERT OR IGNORE INTO amenities (id, name)
+INSERT OR IGNORE INTO amenities (id, name, image_url)
 VALUES
-    ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'WiFi'),
-    ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'Swimming Pool'),
-    ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'Air Conditioning'),
-    ('6ba7b813-9dad-11d1-80b4-00c04fd430c8', 'Parking'),
-    ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 'Kitchen');
+    ('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'WiFi', 'icon_wifi.png'),
+    ('6ba7b811-9dad-11d1-80b4-00c04fd430c8', 'Bed', 'icon_bed.png'),
+    ('6ba7b812-9dad-11d1-80b4-00c04fd430c8', 'Bath', 'icon_bath.png'),
+    ('6ba7b814-9dad-11d1-80b4-00c04fd430c8', 'Parking', NULL);
 
 -- 4. Insertion des lieux (places)
 INSERT OR IGNORE INTO places (id, title, description, price, latitude, longitude, owner_id, image_url)
 VALUES
-    ('7ba7b810-9dad-11d1-80b4-00c04fd430c8', 'Cozy Studio in Paris', 'A charming studio in the heart of Paris, close to the Eiffel Tower.', 85.0, 48.8566, 2.3522, '550e8400-e29b-41d4-a716-446655440001', 'paris_studio.jpg'),
-    ('7ba7b811-9dad-11d1-80b4-00c04fd430c8', 'Sunny Villa in Nice', 'Beautiful villa with a pool and sea view on the French Riviera.', 220.0, 43.7102, 7.2620, '550e8400-e29b-41d4-a716-446655440002', 'nice_villa.jpg'),
-    ('7ba7b812-9dad-11d1-80b4-00c04fd430c8', 'Mountain Chalet in Chamonix', 'Cozy wooden chalet at the foot of Mont Blanc, perfect for skiing.', 150.0, 45.9237, 6.8694, '550e8400-e29b-41d4-a716-446655440003', 'chamonix_chalet.jpg'),
-    ('7ba7b813-9dad-11d1-80b4-00c04fd430c8', 'Modern Loft in Lyon', 'Spacious loft in the Confluence district, close to restaurants and shops.', 70.0, 45.7640, 4.8357, '550e8400-e29b-41d4-a716-446655440001', 'lyon_loft.jpg'),
-    ('7ba7b814-9dad-11d1-80b4-00c04fd430c8', 'Beachside Apartment in Biarritz', 'Steps from the beach, perfect for surfers and sea lovers.', 110.0, 43.4832, -1.5586, '550e8400-e29b-41d4-a716-446655440002', 'biarritz_apt.jpg');
+    ('7ba7b810-9dad-11d1-80b4-00c04fd430c8', 'Cozy Studio in Paris', 'A charming studio in the heart of Paris, close to the Eiffel Tower.', 100.0, 48.8566, 2.3522, '550e8400-e29b-41d4-a716-446655440001', 'paris_studio.jpg'),
+    ('7ba7b811-9dad-11d1-80b4-00c04fd430c8', 'Sunny Villa in Nice', 'Beautiful villa with a pool and sea view on the French Riviera.', 50.0, 43.7102, 7.2620, '550e8400-e29b-41d4-a716-446655440002', 'nice_villa.jpg'),
+    ('7ba7b812-9dad-11d1-80b4-00c04fd430c8', 'Mountain Chalet in Chamonix', 'Cozy wooden chalet at the foot of Mont Blanc, perfect for skiing.', 10.0, 45.9237, 6.8694, '550e8400-e29b-41d4-a716-446655440003', 'chamonix_chalet.jpg'),
+    ('7ba7b813-9dad-11d1-80b4-00c04fd430c8', 'Modern Loft in Lyon', 'Spacious loft in the Confluence district, close to restaurants and shops.', 90.0, 45.7640, 4.8357, '550e8400-e29b-41d4-a716-446655440001', 'lyon_loft.jpg'),
+    ('7ba7b814-9dad-11d1-80b4-00c04fd430c8', 'Beachside Apartment in Biarritz', 'Steps from the beach, perfect for surfers and sea lovers.', 45.0, 43.4832, -1.5586, '550e8400-e29b-41d4-a716-446655440002', 'biarritz_apt.jpg');
 
 -- 5. Insertion des avis (reviews)
 INSERT OR IGNORE INTO reviews (id, text, rating, user_id, place_id)
@@ -47,25 +46,29 @@ VALUES
     ('8ba7b814-9dad-11d1-80b4-00c04fd430c8', 'Very modern and comfortable, great location in Lyon.', 4, '550e8400-e29b-41d4-a716-446655440003', '7ba7b813-9dad-11d1-80b4-00c04fd430c8');
 
 -- 6. Association des équipements aux lieux (place_amenity)
--- Exemple : Le studio parisien a WiFi, Parking et Kitchen
+-- Exemple : Le studio parisien a WiFi, un lit et une salle de bain
 INSERT OR IGNORE INTO place_amenity (place_id, amenity_id)
 VALUES
     ('7ba7b810-9dad-11d1-80b4-00c04fd430c8', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'), -- WiFi
-    ('7ba7b810-9dad-11d1-80b4-00c04fd430c8', '6ba7b813-9dad-11d1-80b4-00c04fd430c8'), -- Parking
-    ('7ba7b810-9dad-11d1-80b4-00c04fd430c8', '6ba7b814-9dad-11d1-80b4-00c04fd430c8'), -- Kitchen
+    ('7ba7b810-9dad-11d1-80b4-00c04fd430c8', '6ba7b811-9dad-11d1-80b4-00c04fd430c8'), -- Bed
+    ('7ba7b810-9dad-11d1-80b4-00c04fd430c8', '6ba7b812-9dad-11d1-80b4-00c04fd430c8'), -- Bath
 
     ('7ba7b811-9dad-11d1-80b4-00c04fd430c8', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'), -- WiFi
-    ('7ba7b811-9dad-11d1-80b4-00c04fd430c8', '6ba7b811-9dad-11d1-80b4-00c04fd430c8'), -- Swimming Pool
-    ('7ba7b811-9dad-11d1-80b4-00c04fd430c8', '6ba7b814-9dad-11d1-80b4-00c04fd430c8'), -- Kitchen
+    ('7ba7b811-9dad-11d1-80b4-00c04fd430c8', '6ba7b811-9dad-11d1-80b4-00c04fd430c8'), -- Bed
+    ('7ba7b811-9dad-11d1-80b4-00c04fd430c8', '6ba7b812-9dad-11d1-80b4-00c04fd430c8'), -- Bath
+    ('7ba7b811-9dad-11d1-80b4-00c04fd430c8', '6ba7b814-9dad-11d1-80b4-00c04fd430c8'), -- Parking
 
-    ('7ba7b812-9dad-11d1-80b4-00c04fd430c8', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'), -- WiFi
-    ('7ba7b812-9dad-11d1-80b4-00c04fd430c8', '6ba7b813-9dad-11d1-80b4-00c04fd430c8'), -- Parking
+    ('7ba7b812-9dad-11d1-80b4-00c04fd430c8', '6ba7b811-9dad-11d1-80b4-00c04fd430c8'), -- Bed
+    ('7ba7b812-9dad-11d1-80b4-00c04fd430c8', '6ba7b812-9dad-11d1-80b4-00c04fd430c8'), -- Bath
+    ('7ba7b812-9dad-11d1-80b4-00c04fd430c8', '6ba7b814-9dad-11d1-80b4-00c04fd430c8'), -- Parking
 
     ('7ba7b813-9dad-11d1-80b4-00c04fd430c8', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'), -- WiFi
-    ('7ba7b813-9dad-11d1-80b4-00c04fd430c8', '6ba7b814-9dad-11d1-80b4-00c04fd430c8'), -- Kitchen
+    ('7ba7b813-9dad-11d1-80b4-00c04fd430c8', '6ba7b811-9dad-11d1-80b4-00c04fd430c8'), -- Bed
+    ('7ba7b813-9dad-11d1-80b4-00c04fd430c8', '6ba7b812-9dad-11d1-80b4-00c04fd430c8'), -- Bath
 
-    ('7ba7b814-9dad-11d1-80b4-00c04fd430c8', '6ba7b810-9dad-11d1-80b4-00c04fd430c8'), -- WiFi
-    ('7ba7b814-9dad-11d1-80b4-00c04fd430c8', '6ba7b814-9dad-11d1-80b4-00c04fd430c8'); -- Kitchen
+    ('7ba7b814-9dad-11d1-80b4-00c04fd430c8', '6ba7b811-9dad-11d1-80b4-00c04fd430c8'), -- Bed
+    ('7ba7b814-9dad-11d1-80b4-00c04fd430c8', '6ba7b812-9dad-11d1-80b4-00c04fd430c8'), -- Bath
+    ('7ba7b814-9dad-11d1-80b4-00c04fd430c8', '6ba7b814-9dad-11d1-80b4-00c04fd430c8'); -- Parking
 
 COMMIT;
 
