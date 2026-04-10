@@ -1,6 +1,6 @@
 /* =============================================
    HBnB — auth/login.js
-   Logique de la page de login
+   Login logic
    ============================================= */
 import { getCookie, setCookie, isAuthenticated } from "./cookie.js";
 import { API_URL } from "../shared/utils.js";

@@ -17,11 +17,14 @@ export function initPlacePage() {
   const token = getCookie("token");
   const placeId = getPlaceIdFromURL();
   const addReviewSec = document.getElementById("add-review");
+  const loginPromptSec = document.getElementById("login-prompt");
 
   if (!token) {
     if (addReviewSec) addReviewSec.style.display = "none";
+    if (loginPromptSec) loginPromptSec.style.display = "block";
   } else {
     if (addReviewSec) addReviewSec.style.display = "block";
+    if (loginPromptSec) loginPromptSec.style.display = "none";
   }
 
   if (!placeId) {
@@ -147,7 +150,14 @@ export function displayPlaceDetails(place) {
   document.title = `HBnB — ${place.name}`;
 
   const addReviewSec = document.getElementById("add-review");
-  if (addReviewSec && isAuthenticated()) {
+  const loginPromptSec = document.getElementById("login-prompt");
+
+  if (isAuthenticated()) {
+    if (addReviewSec) addReviewSec.style.display = "block";
+    if (loginPromptSec) loginPromptSec.style.display = "none";
     setupReviewForm(place.id);
+  } else {
+    if (addReviewSec) addReviewSec.style.display = "none";
+    if (loginPromptSec) loginPromptSec.style.display = "block";
   }
 }
