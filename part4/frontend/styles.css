@@ -1,19 +1,28 @@
 /* =============================================
-   HBnB — Global Styles
+   HBnB — Dark Esports Theme
+   Inspired by gentlemates.com
    ============================================= */
 
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap");
 
 :root {
-  --coral: #ff5a5f;
-  --coral-dk: #e0474c;
-  --dark: #222222;
-  --mid: #717171;
-  --light: #dddddd;
-  --bg: #f7f7f7;
-  --white: #ffffff;
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-  --radius: 14px;
+  --bg:          #0d0d0d;
+  --bg-card:     #1a1a1a;
+  --bg-elevated: #232323;
+  --bg-input:    #151515;
+  --accent:      #00e5a0;
+  --accent-dk:   #00c48a;
+  --accent-glow: rgba(0, 229, 160, 0.15);
+  --red:         #ff4655;
+  --gold:        #ffd700;
+  --text:        #e8e8e8;
+  --text-muted:  #888888;
+  --text-dim:    #555555;
+  --border:      #2a2a2a;
+  --white:       #ffffff;
+  --shadow:      0 8px 32px rgba(0, 0, 0, 0.4);
+  --glow:        0 0 24px var(--accent-glow);
+  --radius:      10px;
 }
 
 *,
@@ -29,137 +38,178 @@ html {
 }
 
 body {
-  font-family: "DM Sans", sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
-  color: var(--dark);
+  color: var(--text);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Header ── */
+/* ── Selection ── */
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* ══════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════ */
 header {
-  background: var(--white);
-  border-bottom: 1px solid var(--light);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 100;
-  padding: 0 32px;
-  height: 72px;
+  padding: 0 40px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(12px);
 }
 
 header .logo {
-  height: 40px;
+  height: 36px;
   width: auto;
   display: block;
+  filter: brightness(0) invert(1);
 }
 
-/* If no logo image: text fallback */
 header .logo-text {
-  font-family: "Playfair Display", serif;
-  font-size: 1.6rem;
+  font-family: "Oswald", sans-serif;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: var(--coral);
-  letter-spacing: -0.5px;
+  color: var(--white);
+  letter-spacing: 2px;
+  text-transform: uppercase;
   text-decoration: none;
 }
 
 nav {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
 }
 
 nav a {
-  font-size: 0.92rem;
+  font-size: 0.85rem;
   font-weight: 500;
-  color: var(--mid);
+  color: var(--text-muted);
   text-decoration: none;
-  transition: color 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.25s;
 }
 nav a:hover,
 nav a.active {
-  color: var(--dark);
+  color: var(--white);
 }
 
 .login-button {
-  background: var(--coral);
-  color: var(--white) !important;
-  padding: 9px 20px;
-  border-radius: 50px;
-  font-weight: 600 !important;
-  font-size: 0.88rem !important;
-  transition:
-    background 0.2s,
-    transform 0.15s !important;
+  background: var(--accent);
+  color: var(--bg) !important;
+  padding: 8px 22px;
+  border-radius: 4px;
+  font-weight: 700 !important;
+  font-size: 0.78rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+  transition: all 0.2s ease !important;
   text-decoration: none;
   border: none;
   cursor: pointer;
 }
 .login-button:hover {
-  background: var(--coral-dk) !important;
+  background: var(--accent-dk) !important;
+  box-shadow: var(--glow) !important;
   transform: translateY(-1px);
 }
 
-/* ── Footer ── */
+/* ══════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════ */
 footer {
-  background: var(--white);
-  border-top: 1px solid var(--light);
-  padding: 28px 32px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  padding: 24px 40px;
   text-align: center;
-  color: var(--mid);
-  font-size: 0.85rem;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
   margin-top: auto;
 }
 
-/* ── Main container ── */
+/* ══════════════════════════════════════════════
+   MAIN CONTAINER
+   ══════════════════════════════════════════════ */
 main {
   flex: 1;
-  padding: 40px 32px;
-  max-width: 1200px;
+  padding: 48px 40px;
+  max-width: 1320px;
   margin: 0 auto;
   width: 100%;
 }
 
 /* ── Section title ── */
 .section-title {
-  font-family: "Playfair Display", serif;
-  font-size: 2rem;
+  font-family: "Oswald", sans-serif;
+  font-size: 2.4rem;
   font-weight: 700;
-  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+  color: var(--white);
 }
 .section-subtitle {
-  color: var(--mid);
-  font-size: 0.95rem;
-  margin-bottom: 32px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 36px;
+  font-weight: 300;
+  letter-spacing: 0.5px;
 }
 
-/* ── Place Cards (index) ── */
+/* ══════════════════════════════════════════════
+   PLACE CARDS (index)
+   ══════════════════════════════════════════════ */
 .places-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 28px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
 }
 
 .place-card {
-  background: var(--white);
+  background: var(--bg-card);
   border: 1px solid #ddd;
+  border-color: var(--border);
   border-radius: 10px;
   overflow: hidden;
   margin: 20px;
   padding: 0;
-  transition:
-    transform 0.25s,
-    box-shadow 0.25s;
+  transition: all 0.3s ease;
   cursor: pointer;
+  position: relative;
 }
 .place-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px);
   box-shadow: var(--shadow);
+  border-color: var(--accent);
+}
+.place-card:hover::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 10px;
+  pointer-events: none;
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 
 .place-card img {
@@ -167,156 +217,190 @@ main {
   height: 200px;
   object-fit: cover;
   display: block;
+  transition: transform 0.4s ease;
+}
+.place-card:hover img {
+  transform: scale(1.05);
 }
 
 .place-card-body {
-  padding: 10px 16px 16px;
+  padding: 10px 18px 18px;
 }
 
 .place-card-body h3 {
-  font-family: "Playfair Display", serif;
+  font-family: "Oswald", sans-serif;
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--white);
 }
 
 .place-card-body .price {
-  color: var(--coral);
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 12px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 14px;
 }
 .place-card-body .price span {
   font-weight: 400;
-  color: var(--mid);
-  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
 }
 
 .details-button {
   display: inline-block;
-  background: var(--coral);
-  color: var(--white);
-  padding: 8px 18px;
-  border-radius: 50px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  background: transparent;
+  color: var(--accent);
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
   text-decoration: none;
-  border: none;
+  border: 1.5px solid var(--accent);
   cursor: pointer;
-  transition:
-    background 0.2s,
-    transform 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.25s ease;
 }
 .details-button:hover {
-  background: var(--coral-dk);
-  transform: translateY(-1px);
+  background: var(--accent);
+  color: var(--bg);
+  box-shadow: var(--glow);
 }
 
 /* ── Empty / error state ── */
 .no-results {
   grid-column: 1 / -1;
   text-align: center;
-  color: var(--mid);
-  font-size: 1rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
   padding: 48px 0;
 }
 
-/* ── Filter bar ── */
+/* ══════════════════════════════════════════════
+   FILTER BAR
+   ══════════════════════════════════════════════ */
 .filter-bar {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: center;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
   flex-wrap: wrap;
 }
 .filter-bar label {
   font-weight: 500;
-  font-size: 0.9rem;
-  color: var(--mid);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 #price-filter {
-  border: 1px solid var(--light);
-  border-radius: 50px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
   padding: 8px 16px;
-  font-family: "DM Sans", sans-serif;
-  font-size: 0.9rem;
-  background: var(--white);
-  color: var(--dark);
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  background: var(--bg-card);
+  color: var(--text);
   cursor: pointer;
   outline: none;
   transition: border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
 }
 #price-filter:focus {
-  border-color: var(--coral);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+#price-filter option {
+  background: var(--bg-card);
+  color: var(--text);
 }
 
-/* ── Place Details ── */
+/* ══════════════════════════════════════════════
+   PLACE DETAILS
+   ══════════════════════════════════════════════ */
 .place-details {
-  background: var(--white);
+  background: var(--bg-card);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
   margin-bottom: 40px;
+  border: 1px solid var(--border);
 }
 
 .place-hero {
   width: 100%;
-  height: 380px;
+  height: 420px;
   object-fit: cover;
   display: block;
 }
 
 .place-info {
-  padding: 32px;
+  padding: 36px;
 }
 
 .place-info h1 {
-  font-family: "Playfair Display", serif;
-  font-size: 2rem;
-  margin-bottom: 8px;
+  font-family: "Oswald", sans-serif;
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--white);
 }
 
 .place-meta {
   display: flex;
   gap: 24px;
   flex-wrap: wrap;
-  color: var(--mid);
-  font-size: 0.9rem;
-  margin-bottom: 20px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-bottom: 24px;
 }
 .place-meta strong {
-  color: var(--dark);
+  color: var(--text);
 }
 
 .place-price-badge {
   display: inline-flex;
   align-items: baseline;
-  gap: 4px;
-  background: #fff0f0;
-  color: var(--coral);
-  padding: 8px 18px;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 1.1rem;
-  margin-bottom: 20px;
+  gap: 6px;
+  background: rgba(0, 229, 160, 0.1);
+  color: var(--accent);
+  padding: 10px 22px;
+  border-radius: 4px;
+  font-weight: 800;
+  font-size: 1.3rem;
+  margin-bottom: 24px;
+  border: 1px solid rgba(0, 229, 160, 0.2);
 }
 .place-price-badge small {
   font-size: 0.8rem;
   font-weight: 400;
+  color: var(--text-muted);
 }
 
 .place-description {
-  color: var(--mid);
-  line-height: 1.7;
-  margin-bottom: 24px;
-  font-size: 0.95rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 28px;
+  font-size: 0.92rem;
 }
 
 .amenities-title,
 .reviews-title {
-  font-family: "Playfair Display", serif;
+  font-family: "Oswald", sans-serif;
   font-size: 1.3rem;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
 }
 
 .amenities-list {
@@ -327,186 +411,224 @@ main {
   list-style: none;
 }
 .amenities-list li {
-  background: var(--bg);
-  border: 1px solid var(--light);
-  border-radius: 50px;
-  padding: 6px 16px;
-  font-size: 0.85rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 7px 16px;
+  font-size: 0.82rem;
+  color: var(--text);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  transition: border-color 0.2s;
+}
+.amenities-list li:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
-/* ── Reviews ── */
+/* ══════════════════════════════════════════════
+   REVIEWS
+   ══════════════════════════════════════════════ */
 .reviews-section {
-  padding: 0 32px 32px;
+  padding: 0 36px 36px;
 }
 
 .review-card {
-  background: var(--white);
+  background: var(--bg-elevated);
   border: 1px solid #ddd;
+  border-color: var(--border);
   border-radius: 10px;
-  padding: 10px 20px 20px;
+  padding: 10px 22px 22px;
   margin: 20px 0;
+  transition: border-color 0.2s;
+}
+.review-card:hover {
+  border-color: var(--text-dim);
 }
 
 .review-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .review-avatar {
   width: 38px;
   height: 38px;
-  background: var(--coral);
-  color: var(--white);
-  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 800;
+  font-size: 0.85rem;
   flex-shrink: 0;
+  letter-spacing: 1px;
 }
 .review-header strong {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
+  color: var(--white);
 }
 .review-rating {
-  color: #f4b400;
-  font-size: 0.9rem;
+  color: var(--gold);
+  font-size: 0.85rem;
   margin-left: auto;
   letter-spacing: 2px;
 }
 .review-card p {
-  color: var(--mid);
-  font-size: 0.9rem;
-  line-height: 1.65;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.7;
 }
 
-/* ── Add Review Form / Login Form ── */
+/* ══════════════════════════════════════════════
+   FORMS (Login, Register, Review)
+   ══════════════════════════════════════════════ */
 .form-page-wrapper {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 60px 16px;
+  padding: 80px 16px;
 }
 
 .form-container {
-  background: var(--white);
+  background: var(--bg-card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 48px 40px;
   width: 100%;
   max-width: 460px;
+  border: 1px solid var(--border);
 }
 
 .form-container h2 {
-  font-family: "Playfair Display", serif;
+  font-family: "Oswald", sans-serif;
   font-size: 1.8rem;
   margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--white);
 }
 .form-container p.form-subtitle {
-  color: var(--mid);
-  font-size: 0.9rem;
-  margin-bottom: 28px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-bottom: 32px;
+  font-weight: 300;
 }
 
 .form .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 .form label {
   display: block;
-  font-size: 0.88rem;
-  font-weight: 500;
-  margin-bottom: 7px;
-  color: var(--dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 .form input,
 .form select,
 .form textarea {
   width: 100%;
-  border: 1.5px solid var(--light);
-  border-radius: 10px;
-  padding: 12px 16px;
-  font-family: "DM Sans", sans-serif;
-  font-size: 0.95rem;
-  color: var(--dark);
-  background: var(--white);
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 13px 16px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.92rem;
+  color: var(--text);
+  background: var(--bg-input);
+  transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
 }
 .form input:focus,
 .form select:focus,
 .form textarea:focus {
-  border-color: var(--coral);
-  box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.12);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.form input::placeholder,
+.form textarea::placeholder {
+  color: var(--text-dim);
 }
 .form textarea {
   resize: vertical;
-  min-height: 110px;
+  min-height: 120px;
 }
 
 .form .submit-btn {
   width: 100%;
-  background: var(--coral);
-  color: var(--white);
+  background: var(--accent);
+  color: var(--bg);
   border: none;
-  border-radius: 50px;
+  border-radius: 4px;
   padding: 14px;
-  font-family: "DM Sans", sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
-  transition:
-    background 0.2s,
-    transform 0.15s;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: all 0.25s ease;
   margin-top: 8px;
 }
 .form .submit-btn:hover {
-  background: var(--coral-dk);
+  background: var(--accent-dk);
+  box-shadow: var(--glow);
   transform: translateY(-1px);
+}
+.form .submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .form-footer-link {
   text-align: center;
-  margin-top: 20px;
-  font-size: 0.88rem;
-  color: var(--mid);
+  margin-top: 24px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 .form-footer-link a {
-  color: var(--coral);
+  color: var(--accent);
   font-weight: 600;
   text-decoration: none;
+  transition: color 0.2s;
 }
 .form-footer-link a:hover {
+  color: var(--accent-dk);
   text-decoration: underline;
 }
 
 /* ── Form error message ── */
 .form-error {
-  color: #c0392b;
-  background: #fdf0ef;
-  border: 1px solid #f5c6c5;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.88rem;
-  margin-top: 12px;
+  color: var(--red);
+  background: rgba(255, 70, 85, 0.1);
+  border: 1px solid rgba(255, 70, 85, 0.3);
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  margin-top: 14px;
   text-align: center;
 }
 
 /* ── Review feedback (success) ── */
 .review-feedback.success {
-  color: #1a7f4b;
-  background: #edfaf3;
-  border: 1px solid #b2e8cd;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 0.88rem;
-  margin-top: 12px;
+  color: var(--accent);
+  background: rgba(0, 229, 160, 0.08);
+  border: 1px solid rgba(0, 229, 160, 0.25);
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+  margin-top: 14px;
   text-align: center;
 }
 
-/* ── Stars input ── */
+/* ══════════════════════════════════════════════
+   STARS INPUT
+   ══════════════════════════════════════════════ */
 .stars-input {
   display: flex;
   gap: 6px;
@@ -518,7 +640,7 @@ main {
 }
 .stars-input label {
   font-size: 1.6rem;
-  color: #ddd;
+  color: var(--text-dim);
   cursor: pointer;
   transition: color 0.15s;
   margin: 0;
@@ -526,43 +648,117 @@ main {
 .stars-input input:checked ~ label,
 .stars-input label:hover,
 .stars-input label:hover ~ label {
-  color: #f4b400;
+  color: var(--gold);
 }
 
-/* ── Add review inline section ── */
+/* ══════════════════════════════════════════════
+   ADD REVIEW INLINE (place page)
+   ══════════════════════════════════════════════ */
 .add-review {
-  padding: 0 32px 40px;
+  padding: 0 36px 44px;
 }
 .add-review h3 {
-  font-family: "Playfair Display", serif;
+  font-family: "Oswald", sans-serif;
   font-size: 1.3rem;
   margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
 }
 .add-review .form {
-  background: var(--bg);
+  background: var(--bg-elevated);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 28px;
   max-width: 560px;
+  border: 1px solid var(--border);
 }
 
-/* ── Responsive ── */
-@media (max-width: 640px) {
+/* ══════════════════════════════════════════════
+   LOADING SKELETON (pulse animation)
+   ══════════════════════════════════════════════ */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+.skeleton {
+  background: var(--bg-elevated);
+  border-radius: 4px;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+/* ══════════════════════════════════════════════
+   ACCENT STRIPE (top decoration)
+   ══════════════════════════════════════════════ */
+header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--accent) 20%,
+    var(--accent) 80%,
+    transparent 100%
+  );
+  opacity: 0.8;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════ */
+@media (max-width: 768px) {
   header {
-    padding: 0 16px;
+    padding: 0 20px;
+    height: 56px;
+  }
+  header .logo-text {
+    font-size: 1.1rem;
+  }
+  nav {
+    gap: 16px;
   }
   main {
-    padding: 24px 16px;
+    padding: 28px 16px;
   }
   .section-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
+  }
+  .places-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 8px;
+  }
+  .place-card {
+    margin: 10px;
   }
   .form-container {
     padding: 32px 22px;
   }
   .place-info {
-    padding: 20px;
+    padding: 22px;
+  }
+  .place-info h1 {
+    font-size: 1.6rem;
+  }
+  .place-hero {
+    height: 240px;
   }
   .reviews-section {
-    padding: 0 20px 24px;
+    padding: 0 22px 28px;
+  }
+  .add-review {
+    padding: 0 22px 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .places-grid {
+    grid-template-columns: 1fr;
+  }
+  .place-meta {
+    flex-direction: column;
+    gap: 8px;
   }
 }

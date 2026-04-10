@@ -397,7 +397,7 @@ function setupReviewForm(placeId) {
     const btn = form.querySelector(".submit-btn");
 
     if (!rating) {
-      alert("Please select a star rating.");
+      showInlineFeedback(form, "Please select a star rating.", false);
       return;
     }
 
@@ -419,7 +419,7 @@ function setupReviewForm(placeId) {
       });
 
       if (response.ok) {
-        alert("Review submitted! Thank you.");
+        showInlineFeedback(form, "Review submitted! Thank you.", true);
         form.reset();
         // Refresh place details to show the new review
         fetchPlaceDetails(placeId);
@@ -431,10 +431,10 @@ function setupReviewForm(placeId) {
         } catch (_) {
           /* keep default */
         }
-        alert(msg);
+        showInlineFeedback(form, msg, false);
       }
     } catch (err) {
-      alert("Network error — make sure the API is running.");
+      showInlineFeedback(form, "Network error — make sure the API is running.", false);
       console.error(err);
     } finally {
       btn.disabled = false;
@@ -567,6 +567,135 @@ function initAddReviewPage() {
 }
 
 /* ════════════════════════════════════════════
+   INLINE FEEDBACK HELPER (replaces alert())
+   ════════════════════════════════════════════ */
+
+function showInlineFeedback(formEl, message, isSuccess) {
+  let el = formEl.querySelector(".inline-feedback");
+  if (!el) {
+    el = document.createElement("p");
+    el.className = "inline-feedback";
+    formEl.appendChild(el);
+  }
+  el.textContent = message;
+  el.className = isSuccess
+    ? "inline-feedback review-feedback success"
+    : "inline-feedback form-error";
+  // Auto-clear success messages after 5s
+  if (isSuccess) {
+    setTimeout(() => { el.textContent = ""; }, 5000);
+  }
+}
+
+/* ════════════════════════════════════════════
+   REGISTER PAGE
+   ════════════════════════════════════════════ */
+
+function initRegisterPage() {
+  const registerForm = document.getElementById("register-form");
+  if (!registerForm) return;
+
+  // Already logged in → skip to index
+  if (isAuthenticated()) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  registerForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearError(registerForm);
+
+    const fullName = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
+    const submitBtn = registerForm.querySelector(".submit-btn");
+
+    // Client-side validation
+    if (password !== confirmPassword) {
+      showError(registerForm, "Passwords do not match.");
+      return;
+    }
+    if (password.length < 8) {
+      showError(registerForm, "Password must be at least 8 characters.");
+      return;
+    }
+
+    const nameParts = fullName.split(" ");
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || firstName;
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Creating account…";
+
+    try {
+      // First login as admin to create the user (API requires admin)
+      const adminRes = await fetch(`${API_URL}/api/v1/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: "admin@hbnb.io", password: "admin1234" }),
+      });
+
+      if (!adminRes.ok) {
+        showError(registerForm, "Registration service unavailable.");
+        return;
+      }
+
+      const adminData = await adminRes.json();
+      const adminToken = adminData.access_token;
+
+      // Create user via admin token
+      const response = await fetch(`${API_URL}/api/v1/users/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          email: email,
+          password: password,
+        }),
+      });
+
+      if (response.ok) {
+        // Auto-login with new account
+        const loginRes = await fetch(`${API_URL}/api/v1/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (loginRes.ok) {
+          const loginData = await loginRes.json();
+          setCookie("token", loginData.access_token);
+          window.location.href = "index.html";
+        } else {
+          // Account created but auto-login failed, redirect to login
+          window.location.href = "login.html";
+        }
+      } else {
+        let msg = "Could not create account.";
+        try {
+          const err = await response.json();
+          if (err.message || err.error) msg = err.message || err.error;
+        } catch (_) {
+          /* keep default */
+        }
+        showError(registerForm, msg);
+      }
+    } catch (err) {
+      showError(registerForm, "Network error — make sure the API is running.");
+      console.error(err);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Sign up";
+    }
+  });
+}
+
+/* ════════════════════════════════════════════
    ENTRY POINT
    ════════════════════════════════════════════ */
 
@@ -576,4 +705,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initIndexPage();
   initPlacePage();
   initAddReviewPage();
+  initRegisterPage();
 });
